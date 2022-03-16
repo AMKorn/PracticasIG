@@ -31,9 +31,4 @@
 *.out
 *.app
 
-.vs\*
-.vs/PracticasIG/v17/Browse.VC.db
-.vs/PracticasIG/v17/Browse.VC.db-shm
-.vs/PracticasIG/v17/Browse.VC.db-wal
-.vs/PracticasIG/v17/Browse.VC.opendb
-.vs/PracticasIG/v17/Browse.VC.db
+.vs/*
