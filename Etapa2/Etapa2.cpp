@@ -10,10 +10,13 @@ const int W_WIDTH = 700; // Tamaño incial de la ventana
 const int W_HEIGHT = 700;
 
 // Boolean to state if axes are to be shown. 
-const int SHOW_AXES = true;
+const int SHOW_AXES = false;
 
-GLfloat fAngulo; // Variable que indica el angulo de rotaci�n de los ejes. 
-int direction = -1;
+GLfloat fAngulo_base; // Variable que indica el angulo de rotación del primer "hueso".
+GLfloat fAngulo2; // Variable que indica el ángulo de rotación del segundo "hueso".
+
+int direction_base = -1;
+int direction2 = -1;
 
 // Funcion que visualiza la escena OpenGL
 void Display(void) {
@@ -30,30 +33,42 @@ void Display(void) {
 	glEnd();
 
 	glPushMatrix();
-	// Las siguientes primitivas se rotan
-	//glRotatef(fAngulo, 0.0f, 0.0f, 1.0f);
+		// Las siguientes primitivas se rotan: es el primer hueso del brazo 
+		// y todas las que estén ancladas a ella
+		glRotatef(fAngulo_base, 0.0f, 0.0f, 1.0f);
 
-	glBegin(GL_POLYGON);
-	glColor3f(0.7f, 0.7f, 0.7f);
-	glVertex3f(-0.05f, -0.05f, 0.0f);
-	glVertex3f(0.05f, -0.05f, 0.0f);
-	glVertex3f(0.05f, 0.5f, 0.0f);
-	glVertex3f(-0.05f, 0.5f, 0.0f);
-	glEnd();
+		glBegin(GL_POLYGON);
+		glColor3f(0.7f, 0.7f, 0.7f);
+		glVertex3f(-0.05f, 0.0f, 0.0f);
+		glVertex3f(0.05f, 0.0f, 0.0f);
+		glVertex3f(0.05f, 0.45f, 0.0f);
+		glVertex3f(-0.05f, 0.45f, 0.0f);
+		glEnd();
 
-	glPushMatrix();
+		DrawCircle(0.0f, 0.0f, 0.05f, 100);
 
-	//glRotatef(fAngulo, 0.0f, 0.0f, 1.0f);
+		glPushMatrix();
+			// Lo siguiente se vuelve a rotar: es el segundo "hueso" del brazo.
+			glTranslatef(0.0f, 0.45f, 0.0f);
+			glRotatef(fAngulo2, 0.0f, 0.0f, 1.0f);
 
-	glBegin(GL_POLYGON);
-	glColor3f(0.9f, 0.9f, 0.9f);
-	glVertex3f(-0.05f, 0.5f, 0.0f);
-	glVertex3f(-0.05f, 0.4f, 0.0f);
-	glVertex3f(0.4f, 0.4f, 0.0f);
-	glVertex3f(0.4f, 0.5f, 0.0f);
-	glEnd();
+			glBegin(GL_POLYGON);
+			glColor3f(0.9f, 0.9f, 0.9f);
+			glVertex3f(0.0f, 0.05f, 0.0f);
+			glVertex3f(0.0f, -0.05f, 0.0f);
+			glVertex3f(0.4f, -0.05f, 0.0f);
+			glVertex3f(0.4f, 0.05f, 0.0f);
+			glEnd();
 
-	glPopMatrix();
+			DrawCircle(0.0f, 0.0f, 0.05f, 100);
+
+			glColor3f(0.0f, 0.0f, 0.0f);
+			DrawCircle(0.0f, 0.0f, 0.025f, 100);
+
+		glPopMatrix();
+
+		glColor3f(0.0f, 0.0f, 0.0f);
+		DrawCircle(0.0f, 0.0f, 0.025f, 100);
 
 	glPopMatrix();
 
@@ -68,27 +83,34 @@ void Display(void) {
 // Funcion que se ejecuta cuando el sistema no esta ocupado
 void Idle(void) {
 	// Incrementamos el angulo
-	fAngulo += 0.01f*direction;
-	// Si es mayor que dos pi la decrementamos
-	if (fAngulo > 10.0f) {
-		direction = -1;
-	} else if (fAngulo < -10.0f) {
-		direction = 1;
+	fAngulo_base += 0.01f*direction_base;
+	// Queremos que el brazo vaya girando solo 10 grados a cada lado de su origen
+	if (fAngulo_base > 10.0f) {
+		direction_base = -1;
+	} else if (fAngulo_base < -10.0f) {
+		direction_base = 1;
+	}
+	// Incrementamos el angulo 2, este hueso gira 20 grados en cada direccion
+	fAngulo2 += 0.03f * direction2;
+	if (fAngulo2 > 20.0f) {
+		direction2 = -1;
+	}
+	else if (fAngulo2 < -20.0f) {
+		direction2 = 1;
 	}
 	// Indicamos que es necesario repintar la pantalla
 	glutPostRedisplay();
 }
 
 void reshape(int width, int height) {
-	const float ar_origin = (float)W_WIDTH / (float)W_HEIGHT;
-	const float ar_new = (float)width / (float)height;
+	const float ar_origin = (float) W_WIDTH / (float) W_HEIGHT;
+	const float ar_new = (float) width / (float) height;
 
-	float scale_w = (float)width / (float)W_WIDTH;
-	float scale_h = (float)height / (float)W_HEIGHT;
+	float scale_w = (float) width / (float) W_WIDTH;
+	float scale_h = (float) height / (float) W_HEIGHT;
 	if (ar_new > ar_origin) {
 		scale_w = scale_h;
-	}
-	else {
+	} else {
 		scale_h = scale_w;
 	}
 

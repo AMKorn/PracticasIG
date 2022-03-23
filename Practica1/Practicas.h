@@ -1,7 +1,9 @@
 // Practicas.h
-// Header to be used by all other stages of the
-// project
+// Header a ser usado por todas las otras etapas del
+// proyecto
 ////////////////////////////////////////////////////
+
+#include <math.h>
 
 // As most color pickers online give the values in
 // 0-255 instead of 0-1, which openGL uses, this
@@ -38,5 +40,16 @@ void print_axes() {
 	glVertex3f(0.01f, 1.0f, 0.0f);
 	glVertex3f(0.02f, 0.9f, 0.0f);
 	glVertex3f(-0.01f, 0.9f, 0.0f);
+	glEnd();
+}
+
+void DrawCircle(float cx, float cy, float r, int num_segments) {
+	glBegin(GL_POLYGON);
+	for (int ii = 0; ii < num_segments; ii++) {
+		float theta = 2.0f * 3.1415926f * float(ii) / float(num_segments);//get the current angle 
+		float x = r * cosf(theta);//calculate the x component 
+		float y = r * sinf(theta);//calculate the y component 
+		glVertex2f(x + cx, y + cy);//output vertex 
+	}
 	glEnd();
 }
