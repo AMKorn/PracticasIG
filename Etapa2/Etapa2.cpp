@@ -10,7 +10,7 @@ const int W_WIDTH = 700; // Tamaño incial de la ventana
 const int W_HEIGHT = 700;
 
 // Boolean to state if axes are to be shown. 
-const int SHOW_AXES = false;
+const int SHOW_AXES = true;
 
 GLfloat fAngulo_base; // Variable que indica el angulo de rotación del primer "hueso".
 GLfloat fAngulo2; // Variable que indica el ángulo de rotación del segundo "hueso".
@@ -45,7 +45,7 @@ void Display(void) {
 		glVertex3f(-0.05f, 0.45f, 0.0f);
 		glEnd();
 
-		DrawCircle(0.0f, 0.0f, 0.05f, 100);
+		DrawEllipse(0.0f, 0.0f, 0.05f, 0.05f, 360);
 
 		glPushMatrix();
 			// Lo siguiente se vuelve a rotar: es el segundo "hueso" del brazo.
@@ -60,15 +60,15 @@ void Display(void) {
 			glVertex3f(0.4f, 0.05f, 0.0f);
 			glEnd();
 
-			DrawCircle(0.0f, 0.0f, 0.05f, 100);
+			DrawEllipse(0.0f, 0.0f, 0.05f, 0.05f, 360);
 
 			glColor3f(0.0f, 0.0f, 0.0f);
-			DrawCircle(0.0f, 0.0f, 0.025f, 100);
+			DrawEllipse(0.0f, 0.0f, 0.025f, 0.025f, 360);
 
 		glPopMatrix();
 
 		glColor3f(0.0f, 0.0f, 0.0f);
-		DrawCircle(0.0f, 0.0f, 0.025f, 100);
+		DrawEllipse(0.0f, 0.0f, 0.025f, 0.025f, 360);
 
 	glPopMatrix();
 
