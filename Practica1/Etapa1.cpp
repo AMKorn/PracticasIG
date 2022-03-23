@@ -15,8 +15,7 @@ const int SHOW_AXES = false;
 GLfloat fAngulo; // Variable que indica el angulo de rotaci�n de los ejes. 
 
 // Funcion que visualiza la escena OpenGL
-void Display(void)
-{
+void Display(void) {
 	// Borramos la escena
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -52,6 +51,14 @@ void Display(void)
 	glVertex3f(-0.5f, -0.866f, 0.0f);
 	glEnd();
 
+	glBegin(GL_POLYGON);
+	glColor3f(224.0f/RGB_MAX, 105.0f/RGB_MAX, 25.0f/RGB_MAX);
+	glVertex3f(-0.2f, -0.2f, 0.0f);
+	glVertex3f(-0.2f, 0.2f, 0.0f);
+	glVertex3f(0.2f, 0.2f, 0.0f);
+	glVertex3f(0.2f, -0.2f, 0.0f);
+	glEnd();
+
 	glPopMatrix();
 	
 	if (SHOW_AXES) {
@@ -63,10 +70,9 @@ void Display(void)
 }
 
 // Funcion que se ejecuta cuando el sistema no esta ocupado
-void Idle(void)
-{
+void Idle(void) {
 	// Incrementamos el angulo
-	fAngulo += 0.3f;
+	fAngulo += 0.1f;
 	// Si es mayor que dos pi la decrementamos
 	if (fAngulo > 360)
 		fAngulo -= 360;
@@ -94,8 +100,7 @@ void reshape(int width, int height) {
 }
 
 // Funcion principal
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
 	// Inicializamos la libreria GLUT
 	glutInit(&argc, argv);
 

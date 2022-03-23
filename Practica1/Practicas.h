@@ -7,7 +7,7 @@
 // 0-255 instead of 0-1, which openGL uses, this
 // constant could be used to easily convert by doing
 // x' = x / RGB_MAX
-const int RGB_MAX = 255;
+const float RGB_MAX = 255.0f;
 
 void print_axes() {
 	// x-axis

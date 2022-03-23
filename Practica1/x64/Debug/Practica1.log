@@ -1,6 +1,6 @@
 ﻿  Etapa1.cpp
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Practica1\Etapa1.cpp(93,61): warning C4244: 'argumento': conversión de 'float' a 'GLsizei'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Practica1\Etapa1.cpp(93,41): warning C4244: 'argumento': conversión de 'float' a 'GLsizei'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Practica1\Etapa1.cpp(93,23): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Practica1\Etapa1.cpp(93,13): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Practica1\Etapa1.cpp(101,61): warning C4244: 'argumento': conversión de 'float' a 'GLsizei'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Practica1\Etapa1.cpp(101,41): warning C4244: 'argumento': conversión de 'float' a 'GLsizei'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Practica1\Etapa1.cpp(101,23): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Practica1\Etapa1.cpp(101,13): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
   Practica1.vcxproj -> C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\x64\Debug\Practica1.exe
