@@ -4,13 +4,13 @@
 #include <GL/glut.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <Etapa1.h>
+#include <Practicas.h>
 
 const int W_WIDTH = 700; // Tamaño incial de la ventana
 const int W_HEIGHT = 700;
 
-// 
-const int SHOW_AXES = true;
+// Boolean to state if axes are to be shown. 
+const int SHOW_AXES = false;
 
 GLfloat fAngulo; // Variable que indica el angulo de rotaci�n de los ejes. 
 
@@ -119,36 +119,4 @@ int main(int argc, char** argv)
 	// Comienza la ejecucion del core de GLUT
 	glutMainLoop();
 	return 0;
-}
-
-void print_axes() {
-	// x-axis
-	glBegin(GL_POLYGON);
-	glColor3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(0.9f, 0.0f, 0.0f);
-	glVertex3f(0.9f, 0.01f, 0.0f);
-	glVertex3f(0.0f, 0.01f, 0.0f);
-	glEnd();
-
-	glBegin(GL_POLYGON);
-	glVertex3f(1.0f, 0.01f, 0.0f);
-	glVertex3f(0.9f, 0.02f, 0.0f);
-	glVertex3f(0.9f, -0.01f, 0.0f);
-	glEnd();
-
-	// y-axis
-	glBegin(GL_POLYGON);
-	glColor3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(0.0f, 0.9f, 0.0f);
-	glVertex3f(0.01f, 0.9f, 0.0f);
-	glVertex3f(0.01f, 0.0f, 0.0f);
-	glEnd(); 
-	
-	glBegin(GL_POLYGON);
-	glVertex3f(0.01f, 1.0f, 0.0f);
-	glVertex3f(0.02f, 0.9f, 0.0f);
-	glVertex3f(-0.01f, 0.9f, 0.0f);
-	glEnd();
 }
