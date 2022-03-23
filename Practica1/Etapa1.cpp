@@ -72,7 +72,7 @@ void Display(void) {
 // Funcion que se ejecuta cuando el sistema no esta ocupado
 void Idle(void) {
 	// Incrementamos el angulo
-	fAngulo += 0.1f;
+	fAngulo += 0.3f;
 	// Si es mayor que dos pi la decrementamos
 	if (fAngulo > 360)
 		fAngulo -= 360;
@@ -110,7 +110,7 @@ int main(int argc, char** argv) {
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
 
 	// Creamos la nueva ventana
-	glutCreateWindow("Mi primera Ventana");
+	glutCreateWindow("Etapa 1");
 
 	// Indicamos cuales son las funciones de redibujado e idle
 	glutReshapeFunc(reshape);
