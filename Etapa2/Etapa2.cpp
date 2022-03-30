@@ -45,7 +45,7 @@ void Display(void) {
 		glVertex3f(-0.05f, 0.45f, 0.0f);
 		glEnd();
 
-		DrawEllipse(0.0f, 0.0f, 0.05f, 0.05f, 360);
+		draw_ellipse(0.0f, 0.0f, 0.05f, 0.05f, 360);
 
 		glPushMatrix();
 			// Lo siguiente se vuelve a rotar: es el segundo "hueso" del brazo.
@@ -60,15 +60,15 @@ void Display(void) {
 			glVertex3f(0.4f, 0.05f, 0.0f);
 			glEnd();
 
-			DrawEllipse(0.0f, 0.0f, 0.05f, 0.05f, 360);
+			draw_ellipse(0.0f, 0.0f, 0.05f, 0.05f, 360);
 
 			glColor3f(0.0f, 0.0f, 0.0f);
-			DrawEllipse(0.0f, 0.0f, 0.025f, 0.025f, 360);
+			draw_ellipse(0.0f, 0.0f, 0.025f, 0.025f, 360);
 
 		glPopMatrix();
 
 		glColor3f(0.0f, 0.0f, 0.0f);
-		DrawEllipse(0.0f, 0.0f, 0.025f, 0.025f, 360);
+		draw_ellipse(0.0f, 0.0f, 0.025f, 0.025f, 360);
 
 	glPopMatrix();
 

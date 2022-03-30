@@ -12,41 +12,47 @@
 const float RGB_MAX = 255.0f;
 
 void print_axes() {
-	// x-axis
-	glBegin(GL_POLYGON);
-	glColor3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(0.9f, 0.0f, 0.0f);
-	glVertex3f(0.9f, 0.01f, 0.0f);
-	glVertex3f(0.0f, 0.01f, 0.0f);
-	glEnd();
+	GLUquadricObj* quadratic;
+	quadratic = gluNewQuadric();
 
-	glBegin(GL_POLYGON);
-	glVertex3f(1.0f, 0.01f, 0.0f);
-	glVertex3f(0.9f, 0.02f, 0.0f);
-	glVertex3f(0.9f, -0.01f, 0.0f);
-	glEnd();
+	// x-axis
+	glPushMatrix();
+		glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+		glColor3f(1.0f, 0.0f, 0.0f);
+		gluCylinder(quadratic, 0.005f, 0.005f, 0.5f, 32, 32);
+		glPushMatrix();
+			glTranslatef(0.0f, 0.0f, 0.5f);
+			glutSolidCone(0.01f, 0.1f, 32, 32);
+		glPopMatrix();
+	glPopMatrix();
 
 	// y-axis
-	glBegin(GL_POLYGON);
-	glColor3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(0.0f, 0.9f, 0.0f);
-	glVertex3f(0.01f, 0.9f, 0.0f);
-	glVertex3f(0.01f, 0.0f, 0.0f);
-	glEnd();
+	glPushMatrix();
+		glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+		glColor3f(0.0f, 1.0f, 0.0f);
+		gluCylinder(quadratic, 0.005f, 0.005f, 0.5f, 32, 32);
+		glPushMatrix();
+			glTranslatef(0.0f, 0.0f, 0.5f);
+			glutSolidCone(0.01f, 0.1f, 32, 32);
+		glPopMatrix();
+	glPopMatrix();
 
-	glBegin(GL_POLYGON);
-	glVertex3f(0.01f, 1.0f, 0.0f);
-	glVertex3f(0.02f, 0.9f, 0.0f);
-	glVertex3f(-0.01f, 0.9f, 0.0f);
-	glEnd();
+	// z-axis
+	glPushMatrix();
+		//glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+		glColor3f(0.0f, 0.0f, 1.0f);
+		gluCylinder(quadratic, 0.005f, 0.005f, 0.5f, 32, 32);
+		glPushMatrix();
+			glTranslatef(0.0f, 0.0f, 0.5f);
+			glutSolidCone(0.01f, 0.1f, 32, 32);
+		glPopMatrix();
+	glPopMatrix();
 }
 
 /**
 * Function to create part of a circumference, up to the specified angle
 */
-void DrawEllipse(float center_x, float center_y, float radius_x, float radius_y, int drawn_angle) {
+void draw_ellipse(float center_x, float center_y, float radius_x, float radius_y, int drawn_angle) {
 	glBegin(GL_TRIANGLE_FAN);
 	glVertex2f(center_x, center_y);
 	for (int i = 0; i <= drawn_angle; i++) {

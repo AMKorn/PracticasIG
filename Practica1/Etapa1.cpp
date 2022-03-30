@@ -10,7 +10,7 @@ const int W_WIDTH = 700; // Tamaño incial de la ventana
 const int W_HEIGHT = 700;
 
 // Boolean to state if axes are to be shown. 
-const int SHOW_AXES = false;
+const int SHOW_AXES = true;
 
 GLfloat fAngulo; // Variable que indica el angulo de rotaci�n de los ejes. 
 
