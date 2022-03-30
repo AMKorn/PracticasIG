@@ -49,6 +49,66 @@ void print_axes() {
 	glPopMatrix();
 }
 
+// Draws a parallelepiped with the given dimensions with a vertex in 0,0,0 and colors the faces.
+void draw_parall(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_length_z) {
+
+	GLfloat half_length = 0.25f;
+
+	// Cara en el plano xy
+	glBegin(GL_POLYGON);
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(0, 0, 0);
+	glVertex3f(face_length_x, 0, 0);
+	glVertex3f(face_length_x, face_length_y, 0);
+	glVertex3f(0, face_length_y, 0);
+	glEnd();
+
+	// Cara paralela al plano xy
+	glBegin(GL_POLYGON);
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(0, 0, face_length_z);
+	glVertex3f(face_length_x, 0, face_length_z);
+	glVertex3f(face_length_x, face_length_y, face_length_z);
+	glVertex3f(0, face_length_y, face_length_z);
+	glEnd();
+
+	// Cara en el plano zy
+	glBegin(GL_POLYGON);
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(0, 0, 0);
+	glVertex3f(0, 0, face_length_z);
+	glVertex3f(0, face_length_y, face_length_z);
+	glVertex3f(0, face_length_y, 0);
+	glEnd();
+
+	// Cara paralela al plano zy
+	glBegin(GL_POLYGON);
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(face_length_x, 0, 0);
+	glVertex3f(face_length_x, 0, face_length_z);
+	glVertex3f(face_length_x, face_length_y, face_length_z);
+	glVertex3f(face_length_x, face_length_y, 0);
+	glEnd();
+
+	// Cara en el plano xz
+	glBegin(GL_POLYGON);
+	glColor3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(0, 0, 0);
+	glVertex3f(face_length_x, 0, 0);
+	glVertex3f(face_length_x, 0, face_length_z);
+	glVertex3f(0, 0, face_length_z);
+	glEnd();
+
+	// Cara paralela al plano xz
+	glBegin(GL_POLYGON);
+	glColor3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(0, face_length_y, 0);
+	glVertex3f(face_length_x, face_length_y, 0);
+	glVertex3f(face_length_x, face_length_y, face_length_z);
+	glVertex3f(0, face_length_y, face_length_z);
+	glEnd();
+}
+
 /**
 * Function to create part of a circumference, up to the specified angle
 */

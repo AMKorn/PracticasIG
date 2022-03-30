@@ -12,7 +12,7 @@ const int W_HEIGHT = 700;
 // Boolean to state if axes are to be shown. 
 const int SHOW_AXES = true;
 
-GLfloat rotate_x, rotate_y, rotatez;
+GLfloat rotate_x, rotate_y;
 
 // Funcion que visualiza la escena OpenGL
 void Display(void) {
@@ -20,70 +20,13 @@ void Display(void) {
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//glFrustum(-100, 10, -10, 10, 0, 100);
-
-	// We draw the wiring of a cube 
-	glPushMatrix();
-		//glColor3f(0.0f, 0.5f, 0.5f);
-		glTranslatef(0.25f, 0.25f, 0.20f);
+	// We draw a cube 
+	glPushMatrix(); {
+		//glTranslatef(0.25f, 0.25f, 0.25f);
 		glRotatef(rotate_x, 1.0f, 0.0f, 0.0f);
 		glRotatef(rotate_y, 0.0f, 1.0f, 0.0f);
-		glEnable(GL_COLOR_MATERIAL);
-		//glutSolidCube(0.5f);
-		glColor3f(0.0f, 0.0f, 0.0f);
-		glutWireCube(0.5f);
-
-		// Caras paralelas al plano xy
-		glBegin(GL_POLYGON);
-		glColor3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(0.25f, 0.25f, 0.25f);
-		glVertex3f(0.25f, -0.25f, 0.25f);
-		glVertex3f(-0.25f, -0.25f, 0.25f);
-		glVertex3f(-0.25f, 0.25f, 0.25f);
-		glEnd();
-
-		glBegin(GL_POLYGON);
-		glColor3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(0.25f, 0.25f, -0.25f);
-		glVertex3f(0.25f, -0.25f, -0.25f);
-		glVertex3f(-0.25f, -0.25f, -0.25f);
-		glVertex3f(-0.25f, 0.25f, -0.25f);
-		glEnd();
-
-		// Caras paralelas al plano zy
-		glBegin(GL_POLYGON);
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glVertex3f(0.25f, 0.25f, 0.25f);
-		glVertex3f(0.25f, -0.25f, 0.25f);
-		glVertex3f(0.25f, -0.25f, -0.25f);
-		glVertex3f(0.25f, 0.25f, -0.25f);
-		glEnd();
-
-		glBegin(GL_POLYGON);
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glVertex3f(-0.25f, 0.25f, 0.25f);
-		glVertex3f(-0.25f, -0.25f, 0.25f);
-		glVertex3f(-0.25f, -0.25f, -0.25f);
-		glVertex3f(-0.25f, 0.25f, -0.25f);
-		glEnd();
-
-		// Caras paralelas al plano xz
-		glBegin(GL_POLYGON);
-		glColor3f(0.0f, 0.0f, 1.0f);
-		glVertex3f(0.25f, 0.25f, 0.25f);
-		glVertex3f(0.25f, 0.25f, -0.25f);
-		glVertex3f(-0.25f, 0.25f, -0.25f);
-		glVertex3f(-0.25f, 0.25f, 0.25f);
-		glEnd();
-
-		glBegin(GL_POLYGON);
-		glColor3f(0.0f, 0.0f, 1.0f);
-		glVertex3f(0.25f, -0.25f, 0.25f);
-		glVertex3f(0.25f, -0.25f, -0.25f);
-		glVertex3f(-0.25f, -0.25f, -0.25f);
-		glVertex3f(-0.25f, -0.25f, 0.25f);
-		glEnd();
-
+		draw_parall(0.5f, 0.15f, 0.5f);
+	}
 	glPopMatrix();
 
 	if (SHOW_AXES) {
@@ -97,7 +40,7 @@ void Display(void) {
 // Funcion que se ejecuta cuando el sistema no esta ocupado
 void Idle(void) {
 	// Incrementamos el angulo
-	//rotate_x += 0.03f;
+	rotate_x += 0.03f;
 	// Si es mayor que dos pi la decrementamos
 	if (rotate_x > 360)
 		rotate_x -= 360;
@@ -125,10 +68,10 @@ void reshape(int width, int height) {
 void specialKeys(int key, int x, int y) {
 	switch (key){
 	case GLUT_KEY_RIGHT:
-		rotate_y += 5;
+		rotate_y -= 5;
 		break;
 	case GLUT_KEY_LEFT:
-		rotate_y -= 5;
+		rotate_y += 5;
 		break;
 	case GLUT_KEY_UP:
 		rotate_x += 5;
@@ -158,7 +101,7 @@ int main(int argc, char** argv) {
 	glutReshapeFunc(reshape);
 	glutDisplayFunc(Display);
 	glutSpecialFunc(specialKeys);
-	glutIdleFunc(Idle);
+	//glutIdleFunc(Idle);
 
 	// El color de fondo sera el negro (RGBA, RGB + Alpha channel)
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);

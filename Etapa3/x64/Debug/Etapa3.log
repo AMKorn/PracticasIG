@@ -1,8 +1,8 @@
 ﻿  Etapa3.cpp
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(121,53): warning C4244: 'argumento': conversión de 'float' a 'GLsizei'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(121,33): warning C4244: 'argumento': conversión de 'float' a 'GLsizei'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(121,19): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(121,13): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(167,19): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(167,13): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(64,53): warning C4244: 'argumento': conversión de 'float' a 'GLsizei'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(64,33): warning C4244: 'argumento': conversión de 'float' a 'GLsizei'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(64,19): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(64,13): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(110,19): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(110,13): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
   Etapa3.vcxproj -> C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\x64\Debug\Etapa3.exe
