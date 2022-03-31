@@ -28,7 +28,7 @@ void Display(void) {
 		0.0f, 1.0f, 0.0f);
 	// We draw a cube 
 	glPushMatrix(); {
-		//glTranslatef(0.25f, 0.25f, 0.25f);
+		glTranslatef(0.25f, 0.25f, 0.25f);
 		glRotatef(rotate_x, 1.0f, 0.0f, 0.0f);
 		glRotatef(rotate_y, 0.0f, 1.0f, 0.0f);
 		draw_parall(0.5f, 0.15f, 0.5f);
@@ -90,28 +90,51 @@ void specialKeys(int key, int x, int y) {
 		if (camera_mode == CAM_PAN) {
 			center_x += 0.05f;
 			center_z -= 0.05f;
+		} else if (camera_mode == CAM_MOVE) {
+			center_x -= 0.05f;
+			center_z += 0.05f;
+			eye_x -= 0.05f;
+			eye_z += 0.05f;
 		}
 		break;
 	case GLUT_KEY_LEFT:
 		if (camera_mode == CAM_PAN) {
 			center_x -= 0.05f;
 			center_z += 0.05f;
+		} else if (camera_mode == CAM_MOVE) {
+			center_x += 0.05f;
+			center_z -= 0.05f;
+			eye_x += 0.05f;
+			eye_z -= 0.05f;
 		}
 		break;
 	case GLUT_KEY_UP:
 		if (camera_mode == CAM_PAN) {
 			center_y += 0.05f;
+		} else if (camera_mode == CAM_MOVE) {
+			center_y -= 0.05f;
+			eye_y -= 0.05f;
 		}
 		break;
 	case GLUT_KEY_DOWN:
 		if (camera_mode == CAM_PAN) {
 			center_y -= 0.05f;
+		} else if (camera_mode == CAM_MOVE) {
+			center_y += 0.05f;
+			eye_y += 0.05f;
 		}
 		break;
 	}
 
 	glutPostRedisplay(); // Solicitar actualización de visualización
 }
+
+//void keyboardKeys(unsigned char key, int x, int y) {
+//	switch (key) {
+//	case 'Q':
+//	
+//	}
+//}
 
 // Funcion principal
 int main(int argc, char** argv) {
@@ -130,6 +153,7 @@ int main(int argc, char** argv) {
 	glutReshapeFunc(reshape);
 	glutDisplayFunc(Display);
 	glutSpecialFunc(specialKeys);
+	//glutKeyboardFunc(keyboardKeys);
 	//glutIdleFunc(Idle);
 
 	// El color de fondo sera el negro (RGBA, RGB + Alpha channel)
@@ -137,9 +161,9 @@ int main(int argc, char** argv) {
 	//glOrtho(-1.0, 1.0f, -1.0, 1.0f, -1.0, 1.0f);
 	//glFrustum(-10, 10, -10, 10, 0, 100);
 	gluPerspective(60, (GLfloat)W_WIDTH / (GLfloat)W_HEIGHT, 0.001f, 100.0f);
-	/*gluLookAt(eye_x, eye_y, eye_z,
-		center_x, center_y, center_z,
-		0.0f, 1.0f, 0.0f);*/
+	//glulookat(eye_x, eye_y, eye_z,
+	//	center_x, center_y, center_z,
+	//	0.0f, 1.0f, 0.0f);
 
 	glViewport(0.0f, 0.0f, W_WIDTH, W_HEIGHT);
 
