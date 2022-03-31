@@ -2,7 +2,9 @@
 // Header a ser usado por todas las otras etapas del
 // proyecto
 ////////////////////////////////////////////////////
-
+#include <GL/glut.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include <math.h>
 
 // As most color pickers online give the values in
@@ -10,6 +12,10 @@
 // constant could be used to easily convert by doing
 // x' = x / RGB_MAX
 const float RGB_MAX = 255.0f;
+
+// Modes for the camera control from etapa 4 and onwards
+const int CAM_PAN = 1;
+const int CAM_MOVE = 2;
 
 void print_axes() {
 	GLUquadricObj* quadratic;
@@ -106,6 +112,16 @@ void draw_parall(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_leng
 	glVertex3f(face_length_x, face_length_y, 0);
 	glVertex3f(face_length_x, face_length_y, face_length_z);
 	glVertex3f(0, face_length_y, face_length_z);
+	glEnd();
+}
+
+// Draws a rectangle on the plane xy, given the dimensions.
+void draw_rectangle(GLfloat dim_x, GLfloat dim_y) {
+	glBegin(GL_POLYGON);
+	glVertex3f(0, 0, 0);
+	glVertex3f(dim_x, 0, 0);
+	glVertex3f(dim_x, dim_y, 0);
+	glVertex3f(0, dim_y, 0);
 	glEnd();
 }
 

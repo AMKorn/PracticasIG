@@ -1,9 +1,6 @@
 // Etapa3.cpp
 // Fichero principal 
 ////////////////////////////////////////////////////
-#include <GL/glut.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <Practicas.h>
 
 const int W_WIDTH = 700; // Tamaño incial de la ventana
@@ -37,7 +34,7 @@ void Display(void) {
 	glutSwapBuffers();
 }
 
-// Funcion que se ejecuta cuando el sistema no esta ocupado
+// Funcion que se ejecuta cuando el sistema no esta ocupado. Sin usar.
 void Idle(void) {
 	// Incrementamos el angulo
 	rotate_x += 0.03f;

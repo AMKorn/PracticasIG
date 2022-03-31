@@ -1,9 +1,6 @@
 // Etapa1.cpp
 // Fichero principal 
 ////////////////////////////////////////////////////
-#include <GL/glut.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <Practicas.h>
 
 const int W_WIDTH = 700; // Tamaño incial de la ventana
