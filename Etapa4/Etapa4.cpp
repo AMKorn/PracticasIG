@@ -4,17 +4,25 @@
 #include <Practicas.h>
 #include <iostream>
 
-const int W_WIDTH = 700; // Tamaño incial de la ventana
+// **** Constants ****
+// Initial window size
+const int W_WIDTH = 700;
 const int W_HEIGHT = 700;
 
 // Boolean to state if axes are to be shown. 
 const int SHOW_AXES = true;
 
-GLfloat rotate_x, rotate_y;
-GLfloat eye_x = 1.0f, eye_y = 1.0f, eye_z = 1.0f;
-GLfloat center_x = 0.0f, center_y = 0.0f, center_z = 0.0f;
+// Constant to state the distance a camera jump makes with each input
+const GLfloat CAM_JUMP = 0.05f;
+const GLfloat CAM_MAX_HEIGHT = 20.0f;
 
-int camera_mode;
+// **** Variables ****
+GLfloat rotate_x, rotate_y; // Variables to manage the object rotation
+GLfloat eye_x = 1.0f, eye_y = 1.0f, eye_z = 1.0f; // Variables to manage the camera
+GLfloat center_x = 0.0f, center_y = 0.0f, center_z = 0.0f;
+GLfloat up_x = 0.0f, up_y = 1.0f, up_z = 0.0f;
+
+int camera_mode = CAM_PAN; // Variable to state which camera mode is enabled. Panning (F1) is default state.
 
 // Funcion que visualiza la escena OpenGL
 void Display(void) {
@@ -25,7 +33,7 @@ void Display(void) {
 	glPushMatrix();
 	gluLookAt(eye_x, eye_y, eye_z,
 		center_x, center_y, center_z,
-		0.0f, 1.0f, 0.0f);
+		up_x, up_y, up_z);
 	// We draw a cube 
 	glPushMatrix(); {
 		glTranslatef(0.25f, 0.25f, 0.25f);
@@ -77,6 +85,9 @@ void reshape(int width, int height) {
 
 // Función para escuchar las teclas
 void specialKeys(int key, int x, int y) {
+	GLfloat module;
+	GLfloat unit_x, unit_y, unit_z;
+
 	switch (key) {
 	case GLUT_KEY_F1:
 		camera_mode = CAM_PAN;
@@ -88,40 +99,89 @@ void specialKeys(int key, int x, int y) {
 		break;
 	case GLUT_KEY_RIGHT:
 		if (camera_mode == CAM_PAN) {
-			center_x += 0.05f;
-			center_z -= 0.05f;
+			// Camera should rotate around itself clockwise
+			// We will use the same idea as a rotation transformation to move the camera center around 
+			// the axis parallel to the y-axis and that passes through the camera eye
+			center_x -= eye_x;
+			center_z -= eye_z; // We move it to where it would be if eye was in (0,y,0)
+
+			center_x = center_x * cosf(CAM_JUMP) + center_z * sinf(CAM_JUMP);
+			center_z = center_z * cosf(CAM_JUMP) - center_x * sinf(CAM_JUMP);
+
+			center_x += eye_x;
+			center_z += eye_z;
+
+			printf("%f, %f, %f\n", center_x, center_y, center_z);
+
 		} else if (camera_mode == CAM_MOVE) {
-			center_x -= 0.05f;
-			center_z += 0.05f;
-			eye_x -= 0.05f;
-			eye_z += 0.05f;
+
 		}
 		break;
 	case GLUT_KEY_LEFT:
 		if (camera_mode == CAM_PAN) {
-			center_x -= 0.05f;
-			center_z += 0.05f;
+			center_x -= eye_x;
+			center_z -= eye_z; // We move it to where it would be if eye was in (0,y,0)
+
+			center_x = center_x * cosf(-CAM_JUMP) + center_z * sinf(-CAM_JUMP);
+			center_z = center_z * cosf(-CAM_JUMP) - center_x * sinf(-CAM_JUMP);
+
+			center_x += eye_x;
+			center_z += eye_z;
+
+			printf("%f, %f, %f\n", center_x, center_y, center_z);
 		} else if (camera_mode == CAM_MOVE) {
-			center_x += 0.05f;
-			center_z -= 0.05f;
-			eye_x += 0.05f;
-			eye_z -= 0.05f;
 		}
 		break;
 	case GLUT_KEY_UP:
-		if (camera_mode == CAM_PAN) {
-			center_y += 0.05f;
+		if (camera_mode == CAM_PAN && center_y < CAM_MAX_HEIGHT) {
+			center_y += CAM_JUMP;
 		} else if (camera_mode == CAM_MOVE) {
-			center_y -= 0.05f;
-			eye_y -= 0.05f;
+			// UP KEY -> move forward
+			
+			// We need to get the unit vector of the vector eye -> center
+			// u = v / module(v);
+			unit_x = center_x - eye_x;
+			unit_y = center_y - eye_y;
+			unit_z = center_z - eye_z;
+
+			module = sqrt(unit_x * unit_x + unit_y * unit_y + unit_z * unit_z);
+			unit_x /= module;
+			unit_y /= module;
+			unit_z /= module;
+
+			center_x += unit_x * CAM_JUMP;
+			center_y += unit_y * CAM_JUMP;
+			center_z += unit_z * CAM_JUMP;
+			eye_x += unit_x * CAM_JUMP;
+			eye_y += unit_y * CAM_JUMP;
+			eye_z += unit_z * CAM_JUMP;
+
 		}
 		break;
 	case GLUT_KEY_DOWN:
-		if (camera_mode == CAM_PAN) {
-			center_y -= 0.05f;
+		if (camera_mode == CAM_PAN && center_y > -CAM_MAX_HEIGHT) {
+			center_y -= CAM_JUMP;
 		} else if (camera_mode == CAM_MOVE) {
-			center_y += 0.05f;
-			eye_y += 0.05f;
+			// DOWN KEY -> move backwards
+
+			// We need to get the unit vector of the vector eye -> center
+			// u = v / module(v);
+			unit_x = center_x - eye_x;
+			unit_y = center_y - eye_y;
+			unit_z = center_z - eye_z;
+
+			module = sqrt(unit_x * unit_x + unit_y * unit_y + unit_z * unit_z);
+			unit_x /= module;
+			unit_y /= module;
+			unit_z /= module;
+
+			center_x -= unit_x * CAM_JUMP;
+			center_y -= unit_y * CAM_JUMP;
+			center_z -= unit_z * CAM_JUMP;
+			eye_x -= unit_x * CAM_JUMP;
+			eye_y -= unit_y * CAM_JUMP;
+			eye_z -= unit_z * CAM_JUMP;
+
 		}
 		break;
 	}
