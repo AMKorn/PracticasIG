@@ -68,6 +68,7 @@ void draw_parall(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_leng
 	glVertex3f(face_length_x, 0, 0);
 	glVertex3f(face_length_x, face_length_y, 0);
 	glVertex3f(0, face_length_y, 0);
+	glNormal3f(0, 0, -1.0f);
 	glEnd();
 
 	// Cara paralela al plano xy
@@ -77,6 +78,7 @@ void draw_parall(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_leng
 	glVertex3f(face_length_x, 0, face_length_z);
 	glVertex3f(face_length_x, face_length_y, face_length_z);
 	glVertex3f(0, face_length_y, face_length_z);
+	glNormal3f(0, 0, 1.0f);
 	glEnd();
 
 	// Cara en el plano zy
@@ -86,6 +88,7 @@ void draw_parall(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_leng
 	glVertex3f(0, 0, face_length_z);
 	glVertex3f(0, face_length_y, face_length_z);
 	glVertex3f(0, face_length_y, 0);
+	glNormal3f(-1.0f, 0, 0);
 	glEnd();
 
 	// Cara paralela al plano zy
@@ -95,6 +98,7 @@ void draw_parall(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_leng
 	glVertex3f(face_length_x, 0, face_length_z);
 	glVertex3f(face_length_x, face_length_y, face_length_z);
 	glVertex3f(face_length_x, face_length_y, 0);
+	glNormal3f(1.0f, 0, 0);
 	glEnd();
 
 	// Cara en el plano xz
@@ -104,6 +108,7 @@ void draw_parall(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_leng
 	glVertex3f(face_length_x, 0, 0);
 	glVertex3f(face_length_x, 0, face_length_z);
 	glVertex3f(0, 0, face_length_z);
+	glNormal3f(0, -1.0f, 0);
 	glEnd();
 
 	// Cara paralela al plano xz
@@ -113,6 +118,7 @@ void draw_parall(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_leng
 	glVertex3f(face_length_x, face_length_y, 0);
 	glVertex3f(face_length_x, face_length_y, face_length_z);
 	glVertex3f(0, face_length_y, face_length_z);
+	glNormal3f(0, 1.0f, 0);
 	glEnd();
 }
 
