@@ -2,7 +2,6 @@
 // Fichero principal 
 ////////////////////////////////////////////////////
 #include <Practicas.h>
-#include <iostream>
 
 // **** Constants ****
 // Initial window size
@@ -97,6 +96,66 @@ void specialKeys(int key, int x, int y) {
 		camera_mode = CAM_MOVE;
 		std::cout << "Camera control mode: moving\n";
 		break;
+	case GLUT_KEY_F3:
+		std::cout << "Set: Nadir plane\n [Camera move not supported]\n";
+		eye_x = 0.5f;
+		eye_y = -1.0f;
+		eye_z = 0.5f;
+		center_x = 0.5f;
+		center_y = 0.0f;
+		center_z = 0.5f;
+		up_x = 1.0f;
+		up_y = 0.0f;
+		up_z = 0.0f;
+		break;
+	case GLUT_KEY_F4:
+		std::cout << "Set: Low angle view\n";
+		eye_x = 1.0f;
+		eye_y = 0.0f;
+		eye_z = 1.0f;
+		center_x = 0.5f;
+		center_y = 0.5f;
+		center_z = 0.5f;
+		up_x = 0.0f;
+		up_y = 1.0f;
+		up_z = 0.0f;
+		break;
+	case GLUT_KEY_F5:
+		std::cout << "Set: Normal view\n";
+		eye_x = 1.0f;
+		eye_y = 0.5f;
+		eye_z = 1.0f;
+		center_x = 0.5f;
+		center_y = 0.5f;
+		center_z = 0.5f;
+		up_x = 0.0f;
+		up_y = 1.0f;
+		up_z = 0.0f;
+		break;
+	case GLUT_KEY_F6:
+		std::cout << "Set: High angle view\n";
+		eye_x = 1.0f;
+		eye_y = 1.0f;
+		eye_z = 1.0f;
+		center_x = 0.0f;
+		center_y = 0.0f;
+		center_z = 0.0f;
+		up_x = 0.0f;
+		up_y = 1.0f;
+		up_z = 0.0f;
+		break;
+	case GLUT_KEY_F7:
+		std::cout << "Set: Zenith view\n [Camera move not supported]\n";
+		eye_x = 0.5f;
+		eye_y = 1.0f;
+		eye_z = 0.5f;
+		center_x = 0.5f;
+		center_y = 0.0f;
+		center_z = 0.5f;
+		up_x = 0.0f;
+		up_y = 0.0f;
+		up_z = 1.0f;
+		break;
 	case GLUT_KEY_RIGHT:
 		if (camera_mode == CAM_PAN) {
 			// Camera should rotate around itself clockwise
@@ -110,11 +169,30 @@ void specialKeys(int key, int x, int y) {
 
 			center_x += eye_x;
 			center_z += eye_z;
-
-			printf("%f, %f, %f\n", center_x, center_y, center_z);
-
 		} else if (camera_mode == CAM_MOVE) {
+			// Camera should move to its right
+			
+			// We need to get the unit vector of the vector eye -> center
+			// u = v / module(v);
+			unit_x = center_x - eye_x;
+			unit_y = center_y - eye_y;
+			unit_z = center_z - eye_z;
 
+			module = sqrt(unit_x * unit_x + unit_y * unit_y + unit_z * unit_z);
+			unit_x /= module;
+			unit_y /= module;
+			unit_z /= module;
+
+			// The right vector is calculated with vectorial product of unit x up;
+			// right_x = -unit_z;
+			// right_y = 0;
+			// right_z = unit_x;
+			// After that, the new center and eye position equal:
+			// center += right; eye += right;
+			center_x -= unit_z * CAM_JUMP;
+			eye_x -= unit_z * CAM_JUMP;
+			center_z += unit_x * CAM_JUMP;
+			eye_z += unit_x * CAM_JUMP;
 		}
 		break;
 	case GLUT_KEY_LEFT:
@@ -127,9 +205,30 @@ void specialKeys(int key, int x, int y) {
 
 			center_x += eye_x;
 			center_z += eye_z;
-
-			printf("%f, %f, %f\n", center_x, center_y, center_z);
 		} else if (camera_mode == CAM_MOVE) {
+			// Camera should move to its left
+
+			// We need to get the unit vector of the vector eye -> center
+			// u = v / module(v);
+			unit_x = center_x - eye_x;
+			unit_y = center_y - eye_y;
+			unit_z = center_z - eye_z;
+
+			module = sqrt(unit_x * unit_x + unit_y * unit_y + unit_z * unit_z);
+			unit_x /= module;
+			unit_y /= module;
+			unit_z /= module;
+
+			// The right vector is calculated with vectorial product of unit x up;
+			// right_x = -unit_z;
+			// right_y = 0;
+			// right_z = unit_x;
+			// After that, the new center and eye position equal:
+			// center -= right; eye -= right;
+			center_x += unit_z * CAM_JUMP;
+			eye_x += unit_z * CAM_JUMP;
+			center_z -= unit_x * CAM_JUMP;
+			eye_z -= unit_x * CAM_JUMP;
 		}
 		break;
 	case GLUT_KEY_UP:
@@ -200,6 +299,8 @@ void specialKeys(int key, int x, int y) {
 int main(int argc, char** argv) {
 	// Inicializamos la libreria GLUT
 	glutInit(&argc, argv);
+
+	printf("Welcome! \n Use the following controls to move the camera:\n F1: Camera panning [default]\n F2: Move camera\n F3: Nadir\n F4: low angle view\n F5: Normal\n F6: high angle view [default]\n F7: Zenith\n");
 
 	// Indicamos como ha de ser la nueva ventana
 	glutInitWindowPosition(100, 100);

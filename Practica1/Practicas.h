@@ -6,6 +6,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <math.h>
+#include <iostream>
 
 // As most color pickers online give the values in
 // 0-255 instead of 0-1, which openGL uses, this
