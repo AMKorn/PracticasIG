@@ -21,9 +21,23 @@ GLfloat eye_x = 1.0f, eye_y = 1.0f, eye_z = 1.0f; // Variables to manage the cam
 GLfloat center_x = 0.0f, center_y = 0.0f, center_z = 0.0f;
 GLfloat up_x = 0.0f, up_y = 1.0f, up_z = 0.0f;
 
-GLfloat light_pos[4] = {0,0,0,0};
+GLfloat ambient_light_value[4] = {0.5f,0,0,1}; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
+
+GLfloat light1_pos[4] = { 0.0f, 1.0f, 1.0f, 1.0f }; // Position of light 1
+GLfloat light1_value[4] = { 215 / RGB_MAX , 104 / RGB_MAX , 7 / RGB_MAX , 1.0f }; // 0.0f, 1.0f, 1.0f, 1.0f }; // Values of light 1 (RGBA)
 
 int camera_mode = CAM_PAN; // Variable to state which camera mode is enabled. Panning (F1) is default state.
+
+// Scene values
+GLfloat table_height = 0.5f;
+
+GLfloat table_surface[] = { 0.75f, 0.05f, 0.5f };
+GLfloat table_leg[] = { 0.05f, table_height - table_surface[y], 0.05f };
+
+GLfloat lamp_position[] = { table_surface[x] / 3, table_height, table_surface[z] / 2 };
+
+GLfloat lamp_base_radius = 0.05f, lamp_base_height = 0.025f;
+GLfloat lamp_arm_radius = lamp_base_radius / 5, lamp_arm_length = 0.1f;
 
 // Funcion que visualiza la escena OpenGL
 void Display(void) {
@@ -35,23 +49,89 @@ void Display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glEnable(GL_LIGHT0);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, light_pos);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light_value);
 
-	glPushMatrix();
-	gluLookAt(eye_x, eye_y, eye_z,
-		center_x, center_y, center_z,
-		up_x, up_y, up_z);
-	// We draw a cube 
+	/*glEnable(GL_LIGHT1);
+	glLightfv(GL_LIGHT1, GL_POSITION, light1_pos);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_value);*/
+
 	glPushMatrix(); {
-		glTranslatef(0.25f, 0.25f, 0.25f);
-		glRotatef(rotate_x, 1.0f, 0.0f, 0.0f);
-		glRotatef(rotate_y, 0.0f, 1.0f, 0.0f);
-		draw_parall(0.5f, 0.15f, 0.5f);
-	}
-	glPopMatrix();
+		gluLookAt(eye_x, eye_y, eye_z,
+			center_x, center_y, center_z,
+			up_x, up_y, up_z);
 
-	if (SHOW_AXES) {
-		print_axes();
+		// Start of scene 
+		glPushMatrix(); {
+			/*glTranslatef(0.25f, 0.25f, 0.25f);
+			glRotatef(rotate_x, 1.0f, 0.0f, 0.0f);
+			glRotatef(rotate_y, 0.0f, 1.0f, 0.0f);*/
+
+			// We draw the table legs
+			draw_parall(table_leg[x], table_leg[y], table_leg[z]);
+
+			glPushMatrix(); {
+				glTranslatef(0, 0, table_surface[z] - table_leg[z]);
+				draw_parall(table_leg[x], table_leg[y], table_leg[z]);
+			}
+			glPopMatrix();
+
+			glPushMatrix(); {
+				glTranslatef(table_surface[x] - table_leg[x], 0, 0);
+				draw_parall(table_leg[x], table_leg[y], table_leg[z]);
+
+				glPushMatrix(); {
+					glTranslatef(0, 0, table_surface[z] - table_leg[z]);
+					draw_parall(table_leg[x], table_leg[y], table_leg[z]);
+				}
+				glPopMatrix();
+			}
+			glPopMatrix();
+			// End of table legs
+
+			// Start of table surface
+			glPushMatrix(); {
+				glTranslatef(0, table_height - table_surface[y], 0);
+				draw_parall(table_surface[x], table_surface[y], table_surface[z]);
+			}
+			glPopMatrix(); // End of table surface
+
+			// Start of lamp 
+			glPushMatrix(); {
+				glTranslatef(lamp_position[x], lamp_position[y], lamp_position[z]);
+
+				glRotated(-90, 1, 0, 0);
+				// Lamp base
+				glPushMatrix(); {
+					glColor3f(0, 0.5f, 0.5f);
+					gluCylinder(quadratic, lamp_base_radius, lamp_base_radius, lamp_base_height, 32, 32);
+
+					// Start of the top of the lamp base
+					glPushMatrix(); {
+						glColor3f(0.5f, 0, 0.5f);
+						glTranslatef(0, 0, lamp_base_height);
+						draw_ellipse(0, 0, lamp_base_radius, lamp_base_radius, 360);
+					}
+					glPopMatrix(); // End of top of lamp base
+				}
+				glPopMatrix(); // End of lamp base
+
+				// First bone of the lamp
+				glPushMatrix(); {
+					glRotated(-30, 0, 1, 0);
+					glColor3f(0, 1, 0);
+					gluCylinder(quadratic, lamp_arm_radius, lamp_arm_radius, lamp_arm_length, 32, 32);
+				}
+				glPopMatrix(); // End of first bone
+
+			}
+			glPopMatrix(); // End of lamp
+
+		}
+		glPopMatrix(); // End of scene
+
+		if (SHOW_AXES) {
+			print_axes();
+		}
 	}
 	glPopMatrix();
 
@@ -112,9 +192,9 @@ void specialKeys(int key, int x, int y) {
 		center_x = 0.5f;
 		center_y = 0.0f;
 		center_z = 0.5f;
-		up_x = 1.0f;
+		up_x = 0.0f;
 		up_y = 0.0f;
-		up_z = 0.0f;
+		up_z = 1.0f;
 		break;
 	case GLUT_KEY_F4:
 		std::cout << "Set: Low angle view\n";
@@ -320,7 +400,7 @@ int main(int argc, char** argv) {
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
 
 	// Creamos la nueva ventana
-	glutCreateWindow("Etapa 4");
+	glutCreateWindow("Etapa 5");
 
 	// Indicamos cuales son las funciones de redibujado e idle
 	glutReshapeFunc(reshape);

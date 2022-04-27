@@ -15,13 +15,17 @@
 const float RGB_MAX = 255.0f;
 
 // Modes for the camera control from etapa 4 and onwards
-const int CAM_PAN = 1;
-const int CAM_MOVE = 2;
+const int CAM_PAN = 0;
+const int CAM_MOVE = 1;
+
+// Variables for positions or vectors set as arrays
+const int x = 0;
+const int y = 1;
+const int z = 2;
+
+GLUquadricObj* quadratic = gluNewQuadric();
 
 void print_axes() {
-	GLUquadricObj* quadratic;
-	quadratic = gluNewQuadric();
-
 	// x-axis
 	glPushMatrix();
 		glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
@@ -63,62 +67,62 @@ void draw_parall(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_leng
 
 	// Cara en el plano xy
 	glBegin(GL_POLYGON);
+	glNormal3f(0, 0, -1.0f);
 	glColor3f(1.0f, 0.0f, 0.0f);
 	glVertex3f(0, 0, 0);
 	glVertex3f(face_length_x, 0, 0);
 	glVertex3f(face_length_x, face_length_y, 0);
 	glVertex3f(0, face_length_y, 0);
-	glNormal3f(0, 0, -1.0f);
 	glEnd();
 
 	// Cara paralela al plano xy
 	glBegin(GL_POLYGON);
+	glNormal3f(0, 0, 1.0f);
 	glColor3f(1.0f, 0.0f, 0.0f);
 	glVertex3f(0, 0, face_length_z);
 	glVertex3f(face_length_x, 0, face_length_z);
 	glVertex3f(face_length_x, face_length_y, face_length_z);
 	glVertex3f(0, face_length_y, face_length_z);
-	glNormal3f(0, 0, 1.0f);
 	glEnd();
 
 	// Cara en el plano zy
 	glBegin(GL_POLYGON);
+	glNormal3f(-1.0f, 0, 0);
 	glColor3f(0.0f, 1.0f, 0.0f);
 	glVertex3f(0, 0, 0);
 	glVertex3f(0, 0, face_length_z);
 	glVertex3f(0, face_length_y, face_length_z);
 	glVertex3f(0, face_length_y, 0);
-	glNormal3f(-1.0f, 0, 0);
 	glEnd();
 
 	// Cara paralela al plano zy
 	glBegin(GL_POLYGON);
+	glNormal3f(1.0f, 0, 0);
 	glColor3f(0.0f, 1.0f, 0.0f);
 	glVertex3f(face_length_x, 0, 0);
 	glVertex3f(face_length_x, 0, face_length_z);
 	glVertex3f(face_length_x, face_length_y, face_length_z);
 	glVertex3f(face_length_x, face_length_y, 0);
-	glNormal3f(1.0f, 0, 0);
 	glEnd();
 
 	// Cara en el plano xz
 	glBegin(GL_POLYGON);
+	glNormal3f(0, -1.0f, 0);
 	glColor3f(0.0f, 0.0f, 1.0f);
 	glVertex3f(0, 0, 0);
 	glVertex3f(face_length_x, 0, 0);
 	glVertex3f(face_length_x, 0, face_length_z);
 	glVertex3f(0, 0, face_length_z);
-	glNormal3f(0, -1.0f, 0);
 	glEnd();
 
 	// Cara paralela al plano xz
 	glBegin(GL_POLYGON);
+	glNormal3f(0, 1.0f, 0);
 	glColor3f(0.0f, 0.0f, 1.0f);
 	glVertex3f(0, face_length_y, 0);
 	glVertex3f(face_length_x, face_length_y, 0);
 	glVertex3f(face_length_x, face_length_y, face_length_z);
 	glVertex3f(0, face_length_y, face_length_z);
-	glNormal3f(0, 1.0f, 0);
 	glEnd();
 }
 
@@ -133,10 +137,11 @@ void draw_rectangle(GLfloat dim_x, GLfloat dim_y) {
 }
 
 /**
-* Function to create part of a circumference, up to the specified angle
+* Function to create part of a circumference, up to the specified angle in degrees
 */
 void draw_ellipse(float center_x, float center_y, float radius_x, float radius_y, int drawn_angle) {
 	glBegin(GL_TRIANGLE_FAN);
+	glNormal3f(0, 0, 1);
 	glVertex2f(center_x, center_y);
 	for (int i = 0; i <= drawn_angle; i++) {
 		float theta = 2.0f * 3.1415926f * float(i) / float(360); //get the current angle 
