@@ -25,7 +25,7 @@ bool lightIsOn = false;
 bool light1IsOn = true;
 GLfloat ambient_light_value[4] = {0.5f,0.5f,0.5f,1}; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
 
-GLfloat light1_pos[4] = { 1.0f, 1.0f, 1.0f, 0.0f }; // Position of light 1
+GLfloat light1_pos[4] = { 0.0f, 0.0f, 0.0f, 1.0f }; // Position of light 1
 GLfloat light1_value[4] = {1, 1, 1, 1}; // 0.0f, 1.0f, 1.0f, 1.0f }; // Values of light 1 (RGBA)
 
 int camera_mode = CAM_PAN; // Variable to state which camera mode is enabled. Panning (F1) is default state.
@@ -131,8 +131,16 @@ void Display(void) {
 					glColor3f(0, 1, 0);
 					gluCylinder(quadratic, lamp_arm_radius, lamp_arm_radius, lamp_arm_length, 32, 32);
 
-					glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_value);
-					glLightfv(GL_LIGHT1, GL_POSITION, light1_pos);
+					glPushMatrix(); {
+						glColor3f(1,1,1);
+						glTranslatef(0, 0, lamp_arm_length);
+
+						glutSolidSphere(0.01f, 32, 32);
+
+						glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_value);
+						glLightfv(GL_LIGHT1, GL_POSITION, light1_pos);
+					}
+					glPopMatrix();
 				}
 				glPopMatrix(); // End of first bone
 
