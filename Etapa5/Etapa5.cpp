@@ -9,7 +9,7 @@ const int W_WIDTH = 700;
 const int W_HEIGHT = 700;
 
 // Boolean to state if axes are to be shown. 
-const int SHOW_AXES = true;
+const bool SHOW_AXES = true;
 
 // Constant to state the distance a camera jump makes with each input
 const GLfloat CAM_JUMP = 0.05f;
@@ -21,10 +21,12 @@ GLfloat eye_x = 1.0f, eye_y = 1.0f, eye_z = 1.0f; // Variables to manage the cam
 GLfloat center_x = 0.0f, center_y = 0.0f, center_z = 0.0f;
 GLfloat up_x = 0.0f, up_y = 1.0f, up_z = 0.0f;
 
-GLfloat ambient_light_value[4] = {0.5f,0,0,1}; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
+bool lightIsOn = false;
+bool light1IsOn = true;
+GLfloat ambient_light_value[4] = {0.5f,0.5f,0.5f,1}; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
 
-GLfloat light1_pos[4] = { 0.0f, 1.0f, 1.0f, 1.0f }; // Position of light 1
-GLfloat light1_value[4] = { 215 / RGB_MAX , 104 / RGB_MAX , 7 / RGB_MAX , 1.0f }; // 0.0f, 1.0f, 1.0f, 1.0f }; // Values of light 1 (RGBA)
+GLfloat light1_pos[4] = { 1.0f, 1.0f, 1.0f, 0.0f }; // Position of light 1
+GLfloat light1_value[4] = {1, 1, 1, 1}; // 0.0f, 1.0f, 1.0f, 1.0f }; // Values of light 1 (RGBA)
 
 int camera_mode = CAM_PAN; // Variable to state which camera mode is enabled. Panning (F1) is default state.
 
@@ -48,12 +50,20 @@ void Display(void) {
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glEnable(GL_LIGHT0);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light_value);
+	if (lightIsOn) {
+		glEnable(GL_LIGHT0);
+		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light_value);
+	}
+	else {
+		glDisable(GL_LIGHT0);
+	}
 
-	/*glEnable(GL_LIGHT1);
-	glLightfv(GL_LIGHT1, GL_POSITION, light1_pos);
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_value);*/
+	if (light1IsOn) {
+		glEnable(GL_LIGHT1);
+	}
+	else {
+		glDisable(GL_LIGHT1);
+	}
 
 	glPushMatrix(); {
 		gluLookAt(eye_x, eye_y, eye_z,
@@ -120,6 +130,9 @@ void Display(void) {
 					glRotated(-30, 0, 1, 0);
 					glColor3f(0, 1, 0);
 					gluCylinder(quadratic, lamp_arm_radius, lamp_arm_radius, lamp_arm_length, 32, 32);
+
+					glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_value);
+					glLightfv(GL_LIGHT1, GL_POSITION, light1_pos);
 				}
 				glPopMatrix(); // End of first bone
 
@@ -380,12 +393,19 @@ void specialKeys(int key, int x, int y) {
 	glutPostRedisplay(); // Solicitar actualización de visualización
 }
 
-//void keyboardKeys(unsigned char key, int x, int y) {
-//	switch (key) {
-//	case 'Q':
-//	
-//	}
-//}
+void keyboardKeys(unsigned char key, int x, int y) {
+	switch (key) {
+	case 'l':
+		lightIsOn = !lightIsOn;
+		break;
+	case '1':
+		light1IsOn = !light1IsOn;
+		break;
+	}
+
+
+	glutPostRedisplay();
+}
 
 // Funcion principal
 int main(int argc, char** argv) {
@@ -406,7 +426,7 @@ int main(int argc, char** argv) {
 	glutReshapeFunc(reshape);
 	glutDisplayFunc(Display);
 	glutSpecialFunc(specialKeys);
-	//glutKeyboardFunc(keyboardKeys);
+	glutKeyboardFunc(keyboardKeys);
 	//glutIdleFunc(Idle);
 
 	// El color de fondo sera el negro (RGBA, RGB + Alpha channel)
