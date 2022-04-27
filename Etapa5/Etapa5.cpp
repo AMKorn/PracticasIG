@@ -21,16 +21,18 @@ GLfloat eye_x = 1.0f, eye_y = 1.0f, eye_z = 1.0f; // Variables to manage the cam
 GLfloat center_x = 0.0f, center_y = 0.0f, center_z = 0.0f;
 GLfloat up_x = 0.0f, up_y = 1.0f, up_z = 0.0f;
 
-bool lightIsOn = false;
-bool light1IsOn = true;
-GLfloat ambient_light_value[4] = {0.5f,0.5f,0.5f,1}; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
+bool ambient_light_is_on = true;
+bool light1_is_on = true;
+GLfloat ambient_light_value[] = {0.5f,0.5f,0.5f,1}; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
 
-GLfloat light1_pos[4] = { 0.0f, 0.0f, 0.0f, 1.0f }; // Position of light 1
-GLfloat light1_value[4] = {1, 1, 1, 1}; // 0.0f, 1.0f, 1.0f, 1.0f }; // Values of light 1 (RGBA)
+GLfloat light1_pos[] = { 0.0f, 0.0f, 0.0f, 1.0f }; // Position of light 1
+GLfloat light1_value[] = {1, 1, 1, 1}; // 0.0f, 1.0f, 1.0f, 1.0f }; // Values of light 1 (RGBA)
 
 int camera_mode = CAM_PAN; // Variable to state which camera mode is enabled. Panning (F1) is default state.
 
 // Scene values
+GLfloat table_color[] = {164 / RGB_MAX, 114 / RGB_MAX , 44 / RGB_MAX}; // A sort of brown color
+
 GLfloat table_height = 0.5f;
 
 GLfloat table_surface[] = { 0.75f, 0.05f, 0.5f };
@@ -50,20 +52,15 @@ void Display(void) {
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	if (lightIsOn) {
+	if (ambient_light_is_on) {
 		glEnable(GL_LIGHT0);
 		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light_value);
-	}
-	else {
-		glDisable(GL_LIGHT0);
-	}
+	} else glDisable(GL_LIGHT0);
 
-	if (light1IsOn) {
+	if (light1_is_on) {
 		glEnable(GL_LIGHT1);
-	}
-	else {
-		glDisable(GL_LIGHT1);
-	}
+		glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_value);
+	} else glDisable(GL_LIGHT1);
 
 	glPushMatrix(); {
 		gluLookAt(eye_x, eye_y, eye_z,
@@ -77,21 +74,21 @@ void Display(void) {
 			glRotatef(rotate_y, 0.0f, 1.0f, 0.0f);*/
 
 			// We draw the table legs
-			draw_parall(table_leg[x], table_leg[y], table_leg[z]);
+			draw_parall_color(table_leg[x], table_leg[y], table_leg[z], table_color);
 
 			glPushMatrix(); {
 				glTranslatef(0, 0, table_surface[z] - table_leg[z]);
-				draw_parall(table_leg[x], table_leg[y], table_leg[z]);
+				draw_parall_color(table_leg[x], table_leg[y], table_leg[z], table_color);
 			}
 			glPopMatrix();
 
 			glPushMatrix(); {
 				glTranslatef(table_surface[x] - table_leg[x], 0, 0);
-				draw_parall(table_leg[x], table_leg[y], table_leg[z]);
+				draw_parall_color(table_leg[x], table_leg[y], table_leg[z], table_color);
 
 				glPushMatrix(); {
 					glTranslatef(0, 0, table_surface[z] - table_leg[z]);
-					draw_parall(table_leg[x], table_leg[y], table_leg[z]);
+					draw_parall_color(table_leg[x], table_leg[y], table_leg[z], table_color);
 				}
 				glPopMatrix();
 			}
@@ -101,7 +98,7 @@ void Display(void) {
 			// Start of table surface
 			glPushMatrix(); {
 				glTranslatef(0, table_height - table_surface[y], 0);
-				draw_parall(table_surface[x], table_surface[y], table_surface[z]);
+				draw_parall_color(table_surface[x], table_surface[y], table_surface[z], table_color);
 			}
 			glPopMatrix(); // End of table surface
 
@@ -131,19 +128,21 @@ void Display(void) {
 					glColor3f(0, 1, 0);
 					gluCylinder(quadratic, lamp_arm_radius, lamp_arm_radius, lamp_arm_length, 32, 32);
 
-					glPushMatrix(); {
-						glColor3f(1,1,1);
-						glTranslatef(0, 0, lamp_arm_length);
-
-						glutSolidSphere(0.01f, 32, 32);
-
-						glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_value);
-						glLightfv(GL_LIGHT1, GL_POSITION, light1_pos);
-					}
-					glPopMatrix();
 				}
 				glPopMatrix(); // End of first bone
 
+				// Light test
+				glPushMatrix(); {
+					glTranslatef(0, 0, 0.3f);
+
+					glColor3f(1, 1, 1);
+					GLfloat white[] = {1,1,0};
+					setMaterial(white, 0, 0, 0, 1, 50);
+					glutSolidSphere(0.01f, 32, 32);
+
+					glLightfv(GL_LIGHT1, GL_POSITION, light1_pos);
+				}
+				glPopMatrix(); // End of light test
 			}
 			glPopMatrix(); // End of lamp
 
@@ -404,10 +403,10 @@ void specialKeys(int key, int x, int y) {
 void keyboardKeys(unsigned char key, int x, int y) {
 	switch (key) {
 	case 'l':
-		lightIsOn = !lightIsOn;
+		ambient_light_is_on = !ambient_light_is_on;
 		break;
 	case '1':
-		light1IsOn = !light1IsOn;
+		light1_is_on = !light1_is_on;
 		break;
 	}
 

@@ -23,6 +23,12 @@ const int x = 0;
 const int y = 1;
 const int z = 2;
 
+// Variables for colors set as arrays
+const int RED = 0;
+const int GREEN = 1;
+const int BLUE = 2;
+const int ALPHA = 3;
+
 GLUquadricObj* quadratic = gluNewQuadric();
 
 void print_axes() {
@@ -60,11 +66,87 @@ void print_axes() {
 	glPopMatrix();
 }
 
-// Draws a parallelepiped with the given dimensions with a vertex in 0,0,0 and colors the faces.
+void setMaterial(GLfloat color[3], GLfloat ambient_level, GLfloat diffuse_level, GLfloat specular_level, GLfloat emission_level, GLfloat shininess) {
+	GLfloat red = color[RED];
+	GLfloat green = color[GREEN];
+	GLfloat blue = color[BLUE];
+	GLfloat ambient[] = { red * ambient_level, green * ambient_level, blue * ambient_level };
+	GLfloat diffuse[] = { red * diffuse_level, green * diffuse_level, blue * diffuse_level };
+	GLfloat specular[] = { red * specular_level, green * specular_level, blue * specular_level };
+	GLfloat emission[] = { red * emission_level, green * emission_level, blue * emission_level };
+	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+	glMaterialfv(GL_FRONT, GL_EMISSION, emission);
+	glMaterialf(GL_FRONT, GL_SHININESS, shininess);
+	glColor3f(red, green, blue);
+}
+
+// Draws a parallelepiped with the given dimensions with a vertex in 0,0,0, traces the lines and colors the faces with the given color.
+void draw_parall_color(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_length_z, GLfloat color[3]) {
+	// Cara en el plano xy
+	glBegin(GL_POLYGON);
+	glNormal3f(0, 0, -1.0f);
+	setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
+	glVertex3f(0, 0, 0);
+	glVertex3f(face_length_x, 0, 0);
+	glVertex3f(face_length_x, face_length_y, 0);
+	glVertex3f(0, face_length_y, 0);
+	glEnd();
+
+	// Cara paralela al plano xy
+	glBegin(GL_POLYGON);
+	glNormal3f(0, 0, 1.0f);
+	setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
+	glVertex3f(0, 0, face_length_z);
+	glVertex3f(face_length_x, 0, face_length_z);
+	glVertex3f(face_length_x, face_length_y, face_length_z);
+	glVertex3f(0, face_length_y, face_length_z);
+	glEnd();
+
+	// Cara en el plano zy
+	glBegin(GL_POLYGON);
+	glNormal3f(-1.0f, 0, 0);
+	setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
+	glVertex3f(0, 0, 0);
+	glVertex3f(0, 0, face_length_z);
+	glVertex3f(0, face_length_y, face_length_z);
+	glVertex3f(0, face_length_y, 0);
+	glEnd();
+
+	// Cara paralela al plano zy
+	glBegin(GL_POLYGON);
+	glNormal3f(1.0f, 0, 0);
+	setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
+	glVertex3f(face_length_x, 0, 0);
+	glVertex3f(face_length_x, 0, face_length_z);
+	glVertex3f(face_length_x, face_length_y, face_length_z);
+	glVertex3f(face_length_x, face_length_y, 0);
+	glEnd();
+
+	// Cara en el plano xz
+	glBegin(GL_POLYGON);
+	glNormal3f(0, -1.0f, 0);
+	setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
+	glVertex3f(0, 0, 0);
+	glVertex3f(face_length_x, 0, 0);
+	glVertex3f(face_length_x, 0, face_length_z);
+	glVertex3f(0, 0, face_length_z);
+	glEnd();
+
+	// Cara paralela al plano xz
+	glBegin(GL_POLYGON);
+	glNormal3f(0, 1.0f, 0);
+	setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
+	glVertex3f(0, face_length_y, 0);
+	glVertex3f(face_length_x, face_length_y, 0);
+	glVertex3f(face_length_x, face_length_y, face_length_z);
+	glVertex3f(0, face_length_y, face_length_z);
+	glEnd();
+}
+
+// Draws a parallelepiped with the given dimensions with a vertex in 0,0,0 and colors the faces red, green and blue.
 void draw_parall(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_length_z) {
-
-	GLfloat half_length = 0.25f;
-
 	// Cara en el plano xy
 	glBegin(GL_POLYGON);
 	glNormal3f(0, 0, -1.0f);
