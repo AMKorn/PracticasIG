@@ -69,26 +69,24 @@ void Display(void) {
 
 		// Start of scene 
 		glPushMatrix(); {
-			/*glTranslatef(0.25f, 0.25f, 0.25f);
-			glRotatef(rotate_x, 1.0f, 0.0f, 0.0f);
-			glRotatef(rotate_y, 0.0f, 1.0f, 0.0f);*/
 
 			// We draw the table legs
-			draw_parall_color(table_leg[x], table_leg[y], table_leg[z], table_color);
+			setMaterial(table_color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
+			draw_parall_material(table_leg[x], table_leg[y], table_leg[z]);
 
 			glPushMatrix(); {
 				glTranslatef(0, 0, table_surface[z] - table_leg[z]);
-				draw_parall_color(table_leg[x], table_leg[y], table_leg[z], table_color);
+				draw_parall_material(table_leg[x], table_leg[y], table_leg[z]);
 			}
 			glPopMatrix();
 
 			glPushMatrix(); {
 				glTranslatef(table_surface[x] - table_leg[x], 0, 0);
-				draw_parall_color(table_leg[x], table_leg[y], table_leg[z], table_color);
+				draw_parall_material(table_leg[x], table_leg[y], table_leg[z]);
 
 				glPushMatrix(); {
 					glTranslatef(0, 0, table_surface[z] - table_leg[z]);
-					draw_parall_color(table_leg[x], table_leg[y], table_leg[z], table_color);
+					draw_parall_material(table_leg[x], table_leg[y], table_leg[z]);
 				}
 				glPopMatrix();
 			}
@@ -98,7 +96,7 @@ void Display(void) {
 			// Start of table surface
 			glPushMatrix(); {
 				glTranslatef(0, table_height - table_surface[y], 0);
-				draw_parall_color(table_surface[x], table_surface[y], table_surface[z], table_color);
+				draw_parall_material(table_surface[x], table_surface[y], table_surface[z]);
 			}
 			glPopMatrix(); // End of table surface
 
@@ -128,6 +126,12 @@ void Display(void) {
 					glColor3f(0, 1, 0);
 					gluCylinder(quadratic, lamp_arm_radius, lamp_arm_radius, lamp_arm_length, 32, 32);
 
+					// First joint
+					glPushMatrix(); {
+						glTranslatef(0,0,lamp_arm_length);
+						glutSolidSphere(lamp_arm_radius * 3/2, 32, 32);
+					}
+					glPopMatrix(); // End of first joint
 				}
 				glPopMatrix(); // End of first bone
 

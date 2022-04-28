@@ -29,9 +29,37 @@ const int GREEN = 1;
 const int BLUE = 2;
 const int ALPHA = 3;
 
+const GLfloat AMBIENT_DEF = 0.2f;
+const GLfloat DIFFUSE_DEF = 0.8f;
+const GLfloat SPECULAR_DEF = 0;
+const GLfloat EMISSION_DEF = 0;
+const GLfloat SHININESS_DEF = 0;
+
 GLUquadricObj* quadratic = gluNewQuadric();
 
+void setMaterial(GLfloat color[3], GLfloat ambient_level, GLfloat diffuse_level, GLfloat specular_level, GLfloat emission_level, GLfloat shininess) {
+	GLfloat red = color[RED];
+	GLfloat green = color[GREEN];
+	GLfloat blue = color[BLUE];
+	GLfloat ambient[] = { red * ambient_level, green * ambient_level, blue * ambient_level };
+	GLfloat diffuse[] = { red * diffuse_level, green * diffuse_level, blue * diffuse_level };
+	GLfloat specular[] = { red * specular_level, green * specular_level, blue * specular_level };
+	GLfloat emission[] = { red * emission_level, green * emission_level, blue * emission_level };
+	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+	glMaterialfv(GL_FRONT, GL_EMISSION, emission);
+	glMaterialf(GL_FRONT, GL_SHININESS, shininess);
+	glColor3f(red, green, blue);
+}
+
+void resetMaterial() {
+	setMaterial(new GLfloat[]{ 0,0,0 }, AMBIENT_DEF, DIFFUSE_DEF, SPECULAR_DEF, EMISSION_DEF, SHININESS_DEF);
+}
+
 void print_axes() {
+	resetMaterial();
+
 	// x-axis
 	glPushMatrix();
 		glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
@@ -66,28 +94,12 @@ void print_axes() {
 	glPopMatrix();
 }
 
-void setMaterial(GLfloat color[3], GLfloat ambient_level, GLfloat diffuse_level, GLfloat specular_level, GLfloat emission_level, GLfloat shininess) {
-	GLfloat red = color[RED];
-	GLfloat green = color[GREEN];
-	GLfloat blue = color[BLUE];
-	GLfloat ambient[] = { red * ambient_level, green * ambient_level, blue * ambient_level };
-	GLfloat diffuse[] = { red * diffuse_level, green * diffuse_level, blue * diffuse_level };
-	GLfloat specular[] = { red * specular_level, green * specular_level, blue * specular_level };
-	GLfloat emission[] = { red * emission_level, green * emission_level, blue * emission_level };
-	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-	glMaterialfv(GL_FRONT, GL_EMISSION, emission);
-	glMaterialf(GL_FRONT, GL_SHININESS, shininess);
-	glColor3f(red, green, blue);
-}
-
-// Draws a parallelepiped with the given dimensions with a vertex in 0,0,0, traces the lines and colors the faces with the given color.
-void draw_parall_color(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_length_z, GLfloat color[3]) {
+// Draws a parallelepiped with the given dimensions with a vertex in 0,0,0 with the current color and material.
+void draw_parall_material(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_length_z) {
 	// Cara en el plano xy
 	glBegin(GL_POLYGON);
 	glNormal3f(0, 0, -1.0f);
-	setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
+	//setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
 	glVertex3f(0, 0, 0);
 	glVertex3f(face_length_x, 0, 0);
 	glVertex3f(face_length_x, face_length_y, 0);
@@ -97,7 +109,7 @@ void draw_parall_color(GLfloat face_length_x, GLfloat face_length_y, GLfloat fac
 	// Cara paralela al plano xy
 	glBegin(GL_POLYGON);
 	glNormal3f(0, 0, 1.0f);
-	setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
+	//setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
 	glVertex3f(0, 0, face_length_z);
 	glVertex3f(face_length_x, 0, face_length_z);
 	glVertex3f(face_length_x, face_length_y, face_length_z);
@@ -107,7 +119,7 @@ void draw_parall_color(GLfloat face_length_x, GLfloat face_length_y, GLfloat fac
 	// Cara en el plano zy
 	glBegin(GL_POLYGON);
 	glNormal3f(-1.0f, 0, 0);
-	setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
+	//setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
 	glVertex3f(0, 0, 0);
 	glVertex3f(0, 0, face_length_z);
 	glVertex3f(0, face_length_y, face_length_z);
@@ -117,7 +129,7 @@ void draw_parall_color(GLfloat face_length_x, GLfloat face_length_y, GLfloat fac
 	// Cara paralela al plano zy
 	glBegin(GL_POLYGON);
 	glNormal3f(1.0f, 0, 0);
-	setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
+	//setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
 	glVertex3f(face_length_x, 0, 0);
 	glVertex3f(face_length_x, 0, face_length_z);
 	glVertex3f(face_length_x, face_length_y, face_length_z);
@@ -127,7 +139,7 @@ void draw_parall_color(GLfloat face_length_x, GLfloat face_length_y, GLfloat fac
 	// Cara en el plano xz
 	glBegin(GL_POLYGON);
 	glNormal3f(0, -1.0f, 0);
-	setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
+	//setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
 	glVertex3f(0, 0, 0);
 	glVertex3f(face_length_x, 0, 0);
 	glVertex3f(face_length_x, 0, face_length_z);
@@ -137,7 +149,7 @@ void draw_parall_color(GLfloat face_length_x, GLfloat face_length_y, GLfloat fac
 	// Cara paralela al plano xz
 	glBegin(GL_POLYGON);
 	glNormal3f(0, 1.0f, 0);
-	setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
+	//setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
 	glVertex3f(0, face_length_y, 0);
 	glVertex3f(face_length_x, face_length_y, 0);
 	glVertex3f(face_length_x, face_length_y, face_length_z);
