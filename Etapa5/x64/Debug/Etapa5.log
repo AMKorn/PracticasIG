@@ -1,8 +1,1 @@
-﻿  Etapa5.cpp
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(194,53): warning C4244: 'argumento': conversión de 'float' a 'GLsizei'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(194,33): warning C4244: 'argumento': conversión de 'float' a 'GLsizei'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(194,19): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(194,13): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(452,19): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(452,13): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
-  Etapa5.vcxproj -> C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\x64\Debug\Etapa5.exe
+﻿  Etapa5.vcxproj -> C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\x64\Debug\Etapa5.exe

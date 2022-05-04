@@ -10,6 +10,7 @@ const int W_HEIGHT = 700;
 
 // Boolean to state if axes are to be shown. 
 const bool SHOW_AXES = true;
+const bool IS_IDLE = true;
 
 // Constant to state the distance a camera jump makes with each input
 const GLfloat CAM_JUMP = 0.05f;
@@ -25,13 +26,15 @@ bool ambient_light_is_on = true;
 bool light1_is_on = true;
 GLfloat ambient_light_value[] = {0.5f,0.5f,0.5f,1}; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
 
-GLfloat light1_pos[] = { 0.0f, 0.0f, 0.0f, 1.0f }; // Position of light 1
+//GLfloat light1_pos[] = { 0.0f, 0.0f, 0.0f, 1.0f }; // Position of light 1
 GLfloat light1_value[] = {1, 1, 1, 1}; // 0.0f, 1.0f, 1.0f, 1.0f }; // Values of light 1 (RGBA)
 
 int camera_mode = CAM_PAN; // Variable to state which camera mode is enabled. Panning (F1) is default state.
 
 // Scene values
 GLfloat table_color[] = {164 / RGB_MAX, 114 / RGB_MAX , 44 / RGB_MAX}; // A sort of brown color
+GLfloat lamp_accents_color[] = { 100 / RGB_MAX, 100 / RGB_MAX, 100 / RGB_MAX};
+GLfloat lamp_arms_color[] = {184 / RGB_MAX, 184 / RGB_MAX, 184 / RGB_MAX};
 
 GLfloat table_height = 0.5f;
 
@@ -43,6 +46,11 @@ GLfloat lamp_position[] = { table_surface[x] / 3, table_height, table_surface[z]
 GLfloat lamp_base_radius = 0.05f, lamp_base_height = 0.025f;
 GLfloat lamp_arm_radius = lamp_base_radius / 5, lamp_arm_length = 0.1f;
 
+GLfloat lamp_cone_width = lamp_arm_radius * 4;
+
+GLfloat lamp_angle = 90.0f;
+GLfloat MAX_LAMP_ANGLE = 90.0f;
+
 // Funcion que visualiza la escena OpenGL
 void Display(void) {
 	// Establecemos la escena con profundidad y con iluminación
@@ -51,6 +59,7 @@ void Display(void) {
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glShadeModel(GL_SMOOTH);
 
 	if (ambient_light_is_on) {
 		glEnable(GL_LIGHT0);
@@ -107,12 +116,12 @@ void Display(void) {
 				glRotated(-90, 1, 0, 0);
 				// Lamp base
 				glPushMatrix(); {
-					glColor3f(0, 0.5f, 0.5f);
-					gluCylinder(quadratic, lamp_base_radius, lamp_base_radius, lamp_base_height, 32, 32);
+					//glColor3f(0, 0.5f, 0.5f);
+					setMaterial(lamp_accents_color, 1, 1, 0.5f, 0, 0.5f);
+					gluCylinder(quadratic, lamp_base_radius, lamp_base_radius, lamp_base_height, 32, 1);
 
 					// Start of the top of the lamp base
 					glPushMatrix(); {
-						glColor3f(0.5f, 0, 0.5f);
 						glTranslatef(0, 0, lamp_base_height);
 						draw_ellipse(0, 0, lamp_base_radius, lamp_base_radius, 360);
 					}
@@ -123,30 +132,48 @@ void Display(void) {
 				// First bone of the lamp
 				glPushMatrix(); {
 					glRotated(-30, 0, 1, 0);
-					glColor3f(0, 1, 0);
-					gluCylinder(quadratic, lamp_arm_radius, lamp_arm_radius, lamp_arm_length, 32, 32);
+					setMaterial(lamp_arms_color, 1, 1, 0.5f, 0, 0.5f);
+					gluCylinder(quadratic, lamp_arm_radius, lamp_arm_radius, lamp_arm_length, 32, 1);
 
 					// First joint
 					glPushMatrix(); {
 						glTranslatef(0,0,lamp_arm_length);
+						setMaterial(lamp_accents_color, 1, 1, 0.5f, 0, 0.5f);
 						glutSolidSphere(lamp_arm_radius * 3/2, 32, 32);
+
+						// Second bone of the lamp
+						glPushMatrix(); {
+							glRotated(lamp_angle, 0, 1, 0);
+							setMaterial(lamp_arms_color, 1, 1, 0.5f, 0, 0.5f);
+							gluCylinder(quadratic, lamp_arm_radius, lamp_arm_radius, lamp_arm_length, 32, 1);
+
+							// Lamp cone
+							glPushMatrix(); {
+								glTranslatef(0, 0, lamp_arm_length);
+								glRotated(lamp_angle - 10, 0, 1, 0);
+								setMaterial(lamp_accents_color, 1, 1, 0.5f, 0, 0.5f);
+								glutSolidSphere(lamp_arm_radius * 3 / 2, 32, 32);
+								gluCylinder(quadratic, lamp_arm_radius, lamp_cone_width, lamp_arm_length / 2, 32, 32);
+
+								glColor3f(1, 1, 1);
+								GLfloat white[] = { 1,1,0 };
+								setMaterial(white, 0, 0, 0, 1, 50);
+								glutSolidSphere(0.01f, 32, 32);
+
+								glLightiv(GL_LIGHT1, GL_POSITION, new GLint[]{0, 0, 0, 1});
+								glLightiv(GL_LIGHT1, GL_SPOT_DIRECTION, new GLint[]{ 0, 0, 1 });
+								glLighti(GL_LIGHT1, GL_SPOT_CUTOFF, 45);
+							}
+							glPopMatrix(); // End of lamp cone
+
+						} 
+						glPopMatrix();// End of second bone
+
 					}
 					glPopMatrix(); // End of first joint
 				}
 				glPopMatrix(); // End of first bone
 
-				// Light test
-				glPushMatrix(); {
-					glTranslatef(0, 0, 0.3f);
-
-					glColor3f(1, 1, 1);
-					GLfloat white[] = {1,1,0};
-					setMaterial(white, 0, 0, 0, 1, 50);
-					glutSolidSphere(0.01f, 32, 32);
-
-					glLightfv(GL_LIGHT1, GL_POSITION, light1_pos);
-				}
-				glPopMatrix(); // End of light test
 			}
 			glPopMatrix(); // End of lamp
 
@@ -159,6 +186,8 @@ void Display(void) {
 	}
 	glPopMatrix();
 
+	resetMaterial();
+
 	glFlush();
 	glutSwapBuffers();
 }
@@ -166,10 +195,10 @@ void Display(void) {
 // Funcion que se ejecuta cuando el sistema no esta ocupado. Sin usar.
 void Idle(void) {
 	// Incrementamos el angulo
-	rotate_x += 0.03f;
+	lamp_angle += 0.03f;
 	// Si es mayor que dos pi la decrementamos
-	if (rotate_x > 360)
-		rotate_x -= 360;
+	if (lamp_angle > 360)
+		lamp_angle -= 360;
 	// Indicamos que es necesario repintar la pantalla
 	glutPostRedisplay();
 }
@@ -438,7 +467,7 @@ int main(int argc, char** argv) {
 	glutDisplayFunc(Display);
 	glutSpecialFunc(specialKeys);
 	glutKeyboardFunc(keyboardKeys);
-	//glutIdleFunc(Idle);
+	if(!IS_IDLE) glutIdleFunc(Idle);
 
 	// El color de fondo sera el negro (RGBA, RGB + Alpha channel)
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
