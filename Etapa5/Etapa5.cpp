@@ -30,6 +30,7 @@ GLfloat ambient_light_value[] = {0.5f,0.5f,0.5f,1}; // values in RGBA // CON luz
 GLfloat light1_value[] = {1, 1, 1, 1}; // 0.0f, 1.0f, 1.0f, 1.0f }; // Values of light 1 (RGBA)
 
 int camera_mode = CAM_PAN; // Variable to state which camera mode is enabled. Panning (F1) is default state.
+int shade_model = 1;
 
 // Scene values
 GLfloat table_color[] = {164 / RGB_MAX, 114 / RGB_MAX , 44 / RGB_MAX}; // A sort of brown color
@@ -50,6 +51,7 @@ GLfloat lamp_cone_width = lamp_arm_radius * 4;
 
 GLfloat lamp_angle = 90.0f;
 GLfloat MAX_LAMP_ANGLE = 90.0f;
+GLint rotation_direction = 1;
 
 // Funcion que visualiza la escena OpenGL
 void Display(void) {
@@ -59,7 +61,11 @@ void Display(void) {
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glShadeModel(GL_SMOOTH);
+	if (shade_model == 1) {
+		glShadeModel(GL_SMOOTH);
+	} else {
+		glShadeModel(GL_FLAT);
+	}
 
 	if (ambient_light_is_on) {
 		glEnable(GL_LIGHT0);
@@ -147,7 +153,7 @@ void Display(void) {
 							setMaterial(lamp_arms_color, 1, 1, 0.5f, 0, 0.5f);
 							gluCylinder(quadratic, lamp_arm_radius, lamp_arm_radius, lamp_arm_length, 32, 1);
 
-							// Lamp cone
+							// Lamp cone + lightbulb
 							glPushMatrix(); {
 								glTranslatef(0, 0, lamp_arm_length);
 								glRotated(lamp_angle - 10, 0, 1, 0);
@@ -155,14 +161,16 @@ void Display(void) {
 								glutSolidSphere(lamp_arm_radius * 3 / 2, 32, 32);
 								gluCylinder(quadratic, lamp_arm_radius, lamp_cone_width, lamp_arm_length / 2, 32, 32);
 
-								glColor3f(1, 1, 1);
-								GLfloat white[] = { 1,1,0 };
-								setMaterial(white, 0, 0, 0, 1, 50);
-								glutSolidSphere(0.01f, 32, 32);
+								resetMaterial();
+								GLfloat yellow[] = { 1, 1 ,0 };
+								glTranslatef(0, 0, 0.035f);
+								setMaterial(yellow, 0, 0, 0, 1, 50);
+								glutSolidSphere(0.02f, 32, 32);
 
-								glLightiv(GL_LIGHT1, GL_POSITION, new GLint[]{0, 0, 0, 1});
-								glLightiv(GL_LIGHT1, GL_SPOT_DIRECTION, new GLint[]{ 0, 0, 1 });
+								glLightfv(GL_LIGHT1, GL_POSITION, new GLfloat[]{0, 0, 0});
+								glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, new GLfloat[]{ 0, 0, 1 });
 								glLighti(GL_LIGHT1, GL_SPOT_CUTOFF, 45);
+								glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 1.0f);
 							}
 							glPopMatrix(); // End of lamp cone
 
@@ -186,8 +194,6 @@ void Display(void) {
 	}
 	glPopMatrix();
 
-	resetMaterial();
-
 	glFlush();
 	glutSwapBuffers();
 }
@@ -195,10 +201,14 @@ void Display(void) {
 // Funcion que se ejecuta cuando el sistema no esta ocupado. Sin usar.
 void Idle(void) {
 	// Incrementamos el angulo
-	lamp_angle += 0.03f;
+	lamp_angle += 0.03f * rotation_direction;
 	// Si es mayor que dos pi la decrementamos
-	if (lamp_angle > 360)
-		lamp_angle -= 360;
+	if (lamp_angle > MAX_LAMP_ANGLE) {
+		rotation_direction = -1;
+	}
+	else if (lamp_angle < 0) {
+		rotation_direction = 1;
+	}
 	// Indicamos que es necesario repintar la pantalla
 	glutPostRedisplay();
 }
@@ -441,8 +451,10 @@ void keyboardKeys(unsigned char key, int x, int y) {
 	case '1':
 		light1_is_on = !light1_is_on;
 		break;
+	case ' ':
+		shade_model = (shade_model + 1) % 2; // toggle shade model
+		break;
 	}
-
 
 	glutPostRedisplay();
 }
