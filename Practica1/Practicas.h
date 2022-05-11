@@ -36,6 +36,7 @@ const GLfloat EMISSION_DEF = 0;
 const GLfloat SHININESS_DEF = 0;
 
 GLUquadricObj* quadratic = gluNewQuadric();
+GLUquadricObj* inv_quadratic = gluNewQuadric();
 
 void setMaterial(GLfloat color[3], GLfloat ambient_level, GLfloat diffuse_level, GLfloat specular_level, GLfloat emission_level, GLfloat shininess) {
 	GLfloat red = color[RED];
@@ -57,7 +58,7 @@ void resetMaterial() {
 	setMaterial(new GLfloat[]{ 0,0,0 }, AMBIENT_DEF, DIFFUSE_DEF, SPECULAR_DEF, EMISSION_DEF, SHININESS_DEF);
 }
 
-void print_axes() {
+void draw_axes() {
 	resetMaterial();
 
 	// x-axis
@@ -99,7 +100,6 @@ void draw_parall_material(GLfloat face_length_x, GLfloat face_length_y, GLfloat 
 	// Cara en el plano xy
 	glBegin(GL_POLYGON);
 	glNormal3f(0, 0, -1.0f);
-	//setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
 	glVertex3f(0, 0, 0);
 	glVertex3f(face_length_x, 0, 0);
 	glVertex3f(face_length_x, face_length_y, 0);
@@ -109,7 +109,6 @@ void draw_parall_material(GLfloat face_length_x, GLfloat face_length_y, GLfloat 
 	// Cara paralela al plano xy
 	glBegin(GL_POLYGON);
 	glNormal3f(0, 0, 1.0f);
-	//setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
 	glVertex3f(0, 0, face_length_z);
 	glVertex3f(face_length_x, 0, face_length_z);
 	glVertex3f(face_length_x, face_length_y, face_length_z);
@@ -119,7 +118,6 @@ void draw_parall_material(GLfloat face_length_x, GLfloat face_length_y, GLfloat 
 	// Cara en el plano zy
 	glBegin(GL_POLYGON);
 	glNormal3f(-1.0f, 0, 0);
-	//setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
 	glVertex3f(0, 0, 0);
 	glVertex3f(0, 0, face_length_z);
 	glVertex3f(0, face_length_y, face_length_z);
@@ -129,7 +127,6 @@ void draw_parall_material(GLfloat face_length_x, GLfloat face_length_y, GLfloat 
 	// Cara paralela al plano zy
 	glBegin(GL_POLYGON);
 	glNormal3f(1.0f, 0, 0);
-	//setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
 	glVertex3f(face_length_x, 0, 0);
 	glVertex3f(face_length_x, 0, face_length_z);
 	glVertex3f(face_length_x, face_length_y, face_length_z);
@@ -139,7 +136,6 @@ void draw_parall_material(GLfloat face_length_x, GLfloat face_length_y, GLfloat 
 	// Cara en el plano xz
 	glBegin(GL_POLYGON);
 	glNormal3f(0, -1.0f, 0);
-	//setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
 	glVertex3f(0, 0, 0);
 	glVertex3f(face_length_x, 0, 0);
 	glVertex3f(face_length_x, 0, face_length_z);
@@ -149,12 +145,82 @@ void draw_parall_material(GLfloat face_length_x, GLfloat face_length_y, GLfloat 
 	// Cara paralela al plano xz
 	glBegin(GL_POLYGON);
 	glNormal3f(0, 1.0f, 0);
-	//setMaterial(color, 0.5f, 1.0f, 1.0f, 0.0f, 50.0f);
 	glVertex3f(0, face_length_y, 0);
 	glVertex3f(face_length_x, face_length_y, 0);
 	glVertex3f(face_length_x, face_length_y, face_length_z);
 	glVertex3f(0, face_length_y, face_length_z);
 	glEnd();
+}
+
+// Draws a parallelepiped with the given dimensions with a vertex in 0,0,0 with the current color and material. 
+// Each face is comprised of smaller squares equal to the parameter slices. This is to improve lighting.
+void draw_parall_material(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_length_z, GLint face_polygons) {
+	// Cara en el plano xy
+	glBegin(GL_POLYGON);
+	glNormal3f(0, 0, -1.0f);
+	glVertex3f(0, 0, 0);
+	glVertex3f(face_length_x, 0, 0);
+	glVertex3f(face_length_x, face_length_y, 0);
+	glVertex3f(0, face_length_y, 0);
+	glEnd();
+
+	//// Cara paralela al plano xy
+	glBegin(GL_POLYGON);
+	glNormal3f(0, 0, 1.0f);
+	glVertex3f(0, 0, face_length_z);
+	glVertex3f(face_length_x, 0, face_length_z);
+	glVertex3f(face_length_x, face_length_y, face_length_z);
+	glVertex3f(0, face_length_y, face_length_z);
+	glEnd();
+
+	// Cara en el plano zy
+	glBegin(GL_POLYGON);
+	glNormal3f(-1.0f, 0, 0);
+	glVertex3f(0, 0, 0);
+	glVertex3f(0, 0, face_length_z);
+	glVertex3f(0, face_length_y, face_length_z);
+	glVertex3f(0, face_length_y, 0);
+	glEnd();
+
+	// Cara paralela al plano zy
+	glBegin(GL_POLYGON);
+	glNormal3f(1.0f, 0, 0);
+	glVertex3f(face_length_x, 0, 0);
+	glVertex3f(face_length_x, 0, face_length_z);
+	glVertex3f(face_length_x, face_length_y, face_length_z);
+	glVertex3f(face_length_x, face_length_y, 0);
+	glEnd();
+
+	// Cara en el plano xz
+	glBegin(GL_POLYGON);
+	glNormal3f(0, -1.0f, 0);
+	glVertex3f(0, 0, 0);
+	glVertex3f(face_length_x, 0, 0);
+	glVertex3f(face_length_x, 0, face_length_z);
+	glVertex3f(0, 0, face_length_z);
+	glEnd();
+
+	// Cara paralela al plano xz
+	/*glBegin(GL_POLYGON);
+	glNormal3f(0, 1.0f, 0);
+	glVertex3f(0, face_length_y, 0);
+	glVertex3f(face_length_x, face_length_y, 0);
+	glVertex3f(face_length_x, face_length_y, face_length_z);
+	glVertex3f(0, face_length_y, face_length_z);
+	glEnd();*/
+
+	glBegin(GL_TRIANGLE_STRIP);
+	glNormal3f(0, 1, 0);
+	for (int i = 0; i < face_polygons; i++) {
+		for (int j = 0; j < face_polygons; j++) {
+			glVertex3f(i * face_length_x / face_polygons, face_length_y, j * face_length_z / face_polygons);
+			glVertex3f(i * face_length_x / face_polygons, face_length_y, (j + 1) * face_length_z / face_polygons);
+			glVertex3f((i + 1) * face_length_x / face_polygons, face_length_y, j * face_length_z / face_polygons);
+			glVertex3f((i + 1) * face_length_x / face_polygons, face_length_y, (j + 1) * face_length_z / face_polygons);
+		}
+	}
+	glEnd();
+
 }
 
 // Draws a parallelepiped with the given dimensions with a vertex in 0,0,0 and colors the faces red, green and blue.

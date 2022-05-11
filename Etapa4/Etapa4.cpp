@@ -115,7 +115,7 @@ void Display(void) {
 		glPopMatrix(); // End of scene
 
 		if (SHOW_AXES) {
-			print_axes();
+			draw_axes();
 		}
 	}
 	glPopMatrix();

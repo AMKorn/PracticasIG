@@ -70,7 +70,7 @@ void Display(void) {
 	glPopMatrix();
 
 	if (SHOW_AXES) {
-		print_axes();
+		draw_axes();
 	}
 
 	glFlush();

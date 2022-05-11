@@ -9,7 +9,7 @@ const int W_WIDTH = 700;
 const int W_HEIGHT = 700;
 
 // Boolean to state if axes are to be shown. 
-const bool SHOW_AXES = true;
+const bool SHOW_AXES = false;
 const bool IS_IDLE = true;
 
 // Constant to state the distance a camera jump makes with each input
@@ -23,7 +23,7 @@ GLfloat center_x = 0.0f, center_y = 0.0f, center_z = 0.0f;
 GLfloat up_x = 0.0f, up_y = 1.0f, up_z = 0.0f;
 
 bool ambient_light_is_on = true;
-bool light1_is_on = true;
+bool light1_is_on = false;
 GLfloat ambient_light_value[] = {0.5f,0.5f,0.5f,1}; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
 
 //GLfloat light1_pos[] = { 0.0f, 0.0f, 0.0f, 1.0f }; // Position of light 1
@@ -51,6 +51,7 @@ GLfloat lamp_cone_width = lamp_arm_radius * 4;
 
 GLfloat lamp_angle = 90.0f;
 GLfloat MAX_LAMP_ANGLE = 90.0f;
+GLfloat lamp_direction[] = { 0,0,1 };
 GLint rotation_direction = 1;
 
 // Funcion que visualiza la escena OpenGL
@@ -75,6 +76,8 @@ void Display(void) {
 	if (light1_is_on) {
 		glEnable(GL_LIGHT1);
 		glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_value);
+		glLighti(GL_LIGHT1, GL_SPOT_CUTOFF, 45);
+		glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 50);
 	} else glDisable(GL_LIGHT1);
 
 	glPushMatrix(); {
@@ -111,7 +114,7 @@ void Display(void) {
 			// Start of table surface
 			glPushMatrix(); {
 				glTranslatef(0, table_height - table_surface[y], 0);
-				draw_parall_material(table_surface[x], table_surface[y], table_surface[z]);
+				draw_parall_material(table_surface[x], table_surface[y], table_surface[z], 128);
 			}
 			glPopMatrix(); // End of table surface
 
@@ -169,17 +172,21 @@ void Display(void) {
 								setMaterial(lamp_accents_color, 1, 1, 0.5f, 0, 0.5f);
 								glutSolidSphere(lamp_arm_radius * 3 / 2, 32, 32);
 								gluCylinder(quadratic, lamp_arm_radius, lamp_cone_width, lamp_arm_length / 2, 32, 32);
+								gluCylinder(inv_quadratic, lamp_arm_radius-0.001f, lamp_cone_width- 0.001f, lamp_arm_length / 2, 32, 32);
 
 								resetMaterial();
-								GLfloat yellow[] = { 1, 1 ,0 };
 								glTranslatef(0, 0, 0.035f);
-								setMaterial(yellow, 0, 0, 0, 1, 50);
+								setMaterial(new GLfloat[]{1,1,0}, 0, 0, 0, 1, 50);
 								glutSolidSphere(0.02f, 32, 32);
 
+								// Light debugging, remove
+								glBegin(GL_LINES);
+								glVertex3f(0,0,0);
+								glVertex3f(lamp_direction[x], lamp_direction[y], lamp_direction[z]);
+								glEnd();
+
 								glLightfv(GL_LIGHT1, GL_POSITION, new GLfloat[]{0, 0, 0});
-								glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, new GLfloat[]{ 0, 0, 1 });
-								glLighti(GL_LIGHT1, GL_SPOT_CUTOFF, 45);
-								glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 1.0f);
+								glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, lamp_direction);
 							}
 							glPopMatrix(); // End of lamp cone
 
@@ -198,7 +205,7 @@ void Display(void) {
 		glPopMatrix(); // End of scene
 
 		if (SHOW_AXES) {
-			print_axes();
+			draw_axes();
 		}
 	}
 	glPopMatrix();
@@ -490,14 +497,12 @@ int main(int argc, char** argv) {
 	glutKeyboardFunc(keyboardKeys);
 	if(!IS_IDLE) glutIdleFunc(Idle);
 
-	// El color de fondo sera el negro (RGBA, RGB + Alpha channel)
+	// Establecemos que inv_quadratic tiene que tener las normales para el interior
+	gluQuadricOrientation(inv_quadratic, GLU_INSIDE);
+
+	// El color de fondo sera el blanco (RGBA, RGB + Alpha channel)
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-	//glOrtho(-1.0, 1.0f, -1.0, 1.0f, -1.0, 1.0f);
-	//glFrustum(-10, 10, -10, 10, 0, 100);
 	gluPerspective(60, (GLfloat)W_WIDTH / (GLfloat)W_HEIGHT, 0.001f, 100.0f);
-	//glulookat(eye_x, eye_y, eye_z,
-	//	center_x, center_y, center_z,
-	//	0.0f, 1.0f, 0.0f);
 
 	glViewport(0.0f, 0.0f, W_WIDTH, W_HEIGHT);
 
