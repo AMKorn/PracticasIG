@@ -217,13 +217,15 @@ void Display(void) {
 // Funcion que se ejecuta cuando el sistema no esta ocupado. Sin usar.
 void Idle(void) {
 	// Incrementamos el angulo
-	lamp_angle += 0.03f * rotation_direction;
-	// Si es mayor que dos pi la decrementamos
-	if (lamp_angle > MAX_LAMP_ANGLE) {
-		rotation_direction = -1;
-	}
-	else if (lamp_angle < 0) {
-		rotation_direction = 1;
+	if (!IS_IDLE) {
+		lamp_angle += 0.03f * rotation_direction;
+		// Si es mayor que dos pi la decrementamos
+		if (lamp_angle > MAX_LAMP_ANGLE) {
+			rotation_direction = -1;
+		}
+		else if (lamp_angle < 0) {
+			rotation_direction = 1;
+		}
 	}
 	// Indicamos que es necesario repintar la pantalla
 	glutPostRedisplay();
@@ -495,7 +497,7 @@ int main(int argc, char** argv) {
 	glutDisplayFunc(Display);
 	glutSpecialFunc(specialKeys);
 	glutKeyboardFunc(keyboardKeys);
-	if(!IS_IDLE) glutIdleFunc(Idle);
+	glutIdleFunc(Idle);
 
 	// Establecemos que inv_quadratic tiene que tener las normales para el interior
 	gluQuadricOrientation(inv_quadratic, GLU_INSIDE);
