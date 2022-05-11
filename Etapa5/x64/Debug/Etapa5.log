@@ -1,8 +1,8 @@
 ﻿  Etapa5.cpp
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(251,53): warning C4244: 'argumento': conversión de 'float' a 'GLsizei'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(251,33): warning C4244: 'argumento': conversión de 'float' a 'GLsizei'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(251,19): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(251,13): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(509,19): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(509,13): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(278,53): warning C4244: 'argumento': conversión de 'float' a 'GLsizei'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(278,33): warning C4244: 'argumento': conversión de 'float' a 'GLsizei'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(278,19): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(278,13): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(539,19): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa5\Etapa5.cpp(539,13): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
   Etapa5.vcxproj -> C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\x64\Debug\Etapa5.exe

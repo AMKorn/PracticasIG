@@ -23,16 +23,21 @@ GLfloat center_x = 0.0f, center_y = 0.0f, center_z = 0.0f;
 GLfloat up_x = 0.0f, up_y = 1.0f, up_z = 0.0f;
 
 bool ambient_light_is_on = true;
-bool light1_is_on = false;
-GLfloat ambient_light_value[] = {0.5f,0.5f,0.5f,1}; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
+bool light1_is_on = true;
+bool light2_is_on = true;
+GLfloat ambient_light_value[] = { 0.5f, 0.5f, 0.5f,1 }; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
 
 //GLfloat light1_pos[] = { 0.0f, 0.0f, 0.0f, 1.0f }; // Position of light 1
 GLfloat light1_value[] = {1, 1, 1, 1}; // 0.0f, 1.0f, 1.0f, 1.0f }; // Values of light 1 (RGBA)
 
+GLfloat light2_pos[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+GLfloat light2_value[] = { 1, 1, 1, 1 };
+
 int camera_mode = CAM_PAN; // Variable to state which camera mode is enabled. Panning (F1) is default state.
 int shade_model = 1;
 
-// Scene values
+// *** Scene values ***
+// * Table values *
 GLfloat table_color[] = {164 / RGB_MAX, 114 / RGB_MAX , 44 / RGB_MAX}; // A sort of brown color
 GLfloat lamp_accents_color[] = { 100 / RGB_MAX, 100 / RGB_MAX, 100 / RGB_MAX};
 GLfloat lamp_arms_color[] = {184 / RGB_MAX, 184 / RGB_MAX, 184 / RGB_MAX};
@@ -42,6 +47,7 @@ GLfloat table_height = 0.5f;
 GLfloat table_surface[] = { 0.75f, 0.05f, 0.5f };
 GLfloat table_leg[] = { 0.05f, table_height - table_surface[y], 0.05f };
 
+// * Lamp values *
 GLfloat lamp_position[] = { table_surface[x] / 3, table_height, table_surface[z] / 2 };
 
 GLfloat lamp_base_radius = 0.05f, lamp_base_height = 0.025f;
@@ -51,8 +57,11 @@ GLfloat lamp_cone_width = lamp_arm_radius * 4;
 
 GLfloat lamp_angle = 90.0f;
 GLfloat MAX_LAMP_ANGLE = 90.0f;
-GLfloat lamp_direction[] = { 0,0,1 };
 GLint rotation_direction = 1;
+
+// * Ball values *
+GLfloat ball_position[] = { table_surface[x] * 2 / 3, table_height, table_surface[z] / 2 };
+GLfloat ball_radius = 0.05f;
 
 // Funcion que visualiza la escena OpenGL
 void Display(void) {
@@ -77,8 +86,17 @@ void Display(void) {
 		glEnable(GL_LIGHT1);
 		glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_value);
 		glLighti(GL_LIGHT1, GL_SPOT_CUTOFF, 45);
-		glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 50);
+		glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 10);
+		//glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1);
+		//glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0);
+		//glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0);
 	} else glDisable(GL_LIGHT1);
+
+	if (light2_is_on) {
+		glEnable(GL_LIGHT2);
+		glLightfv(GL_LIGHT2, GL_SPECULAR, light2_value);
+		glLightfv(GL_LIGHT2, GL_POSITION, light2_pos);
+	} else glDisable(GL_LIGHT2);
 
 	glPushMatrix(); {
 		gluLookAt(eye_x, eye_y, eye_z,
@@ -182,11 +200,11 @@ void Display(void) {
 								// Light debugging, remove
 								glBegin(GL_LINES);
 								glVertex3f(0,0,0);
-								glVertex3f(lamp_direction[x], lamp_direction[y], lamp_direction[z]);
+								glVertex3f(0, 0, 1);
 								glEnd();
 
 								glLightfv(GL_LIGHT1, GL_POSITION, new GLfloat[]{0, 0, 0});
-								glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, lamp_direction);
+								glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, new GLfloat[]{0,0,1});
 							}
 							glPopMatrix(); // End of lamp cone
 
@@ -200,6 +218,15 @@ void Display(void) {
 
 			}
 			glPopMatrix(); // End of lamp
+
+			//// Start of ball
+			//glPushMatrix(); {
+			//	glTranslatef(ball_position[x], ball_position[y] + ball_radius, ball_position[z]);
+			//	resetMaterial();
+			//	glColor3f(0,1,0);
+			//	glutSolidSphere(ball_radius, 32, 32);
+			//}
+			//glPopMatrix(); // End of ball
 
 		}
 		glPopMatrix(); // End of scene
@@ -338,7 +365,7 @@ void specialKeys(int key, int x, int y) {
 
 			center_x += eye_x;
 			center_z += eye_z;
-		}
+		} 
 		else if (camera_mode == CAM_MOVE) {
 			// Camera should move to its right
 
@@ -468,6 +495,9 @@ void keyboardKeys(unsigned char key, int x, int y) {
 		break;
 	case '1':
 		light1_is_on = !light1_is_on;
+		break;
+	case '2':
+		light2_is_on = !light2_is_on;
 		break;
 	case ' ':
 		shade_model = (shade_model + 1) % 2; // toggle shade model
