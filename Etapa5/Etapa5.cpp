@@ -130,6 +130,15 @@ void Display(void) {
 					glPushMatrix(); {
 						glTranslatef(0, 0, lamp_base_height);
 						draw_ellipse(0, 0, lamp_base_radius, lamp_base_radius, 360);
+
+						glTranslatef(lamp_base_radius / 3, 0, 0);
+						glColor3f(0,0,0);
+						GLfloat switch_height = 0.01f;
+						if (light1_is_on) switch_height /= 3;
+
+						gluCylinder(quadratic, 0.005f, 0.005f, switch_height, 16, 1);
+						glTranslatef(0, 0, switch_height);
+						glutSolidSphere(0.005f, 16, 16);
 					}
 					glPopMatrix(); // End of top of lamp base
 				}
