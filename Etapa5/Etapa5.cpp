@@ -28,10 +28,14 @@ bool light2_is_on = true;
 GLfloat ambient_light_value[] = { 0.5f, 0.5f, 0.5f,1 }; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
 
 //GLfloat light1_pos[] = { 0.0f, 0.0f, 0.0f, 1.0f }; // Position of light 1
-GLfloat light1_value[] = {1, 1, 1, 1}; // 0.0f, 1.0f, 1.0f, 1.0f }; // Values of light 1 (RGBA)
+GLfloat light1_value[] = {1, 1, 1, 1}; // { 0.0f, 1.0f, 1.0f, 1.0f }; // Values of light 1 (RGBA)
 
-GLfloat light2_pos[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-GLfloat light2_value[] = { 1, 1, 1, 1 };
+GLfloat light2_posx = 0.5f;
+GLfloat light2_posy = 0.6f;
+GLfloat light2_posz = 0.25f;
+GLfloat light2_ambient[] = { 0,0,0,1 };
+GLfloat light2_diffuse[] = { 1,1,1,1 };
+GLfloat light2_specular[] = { 1,1,1,1 };
 
 int camera_mode = CAM_PAN; // Variable to state which camera mode is enabled. Panning (F1) is default state.
 int shade_model = 1;
@@ -92,16 +96,30 @@ void Display(void) {
 		//glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0);
 	} else glDisable(GL_LIGHT1);
 
-	if (light2_is_on) {
-		glEnable(GL_LIGHT2);
-		glLightfv(GL_LIGHT2, GL_SPECULAR, light2_value);
-		glLightfv(GL_LIGHT2, GL_POSITION, light2_pos);
-	} else glDisable(GL_LIGHT2);
-
 	glPushMatrix(); {
 		gluLookAt(eye_x, eye_y, eye_z,
 			center_x, center_y, center_z,
 			up_x, up_y, up_z);
+
+		// Free light 
+		if (light2_is_on) {
+			glEnable(GL_LIGHT2);
+			glLightfv(GL_LIGHT2, GL_AMBIENT, light2_ambient);
+			glLightfv(GL_LIGHT2, GL_DIFFUSE, light2_diffuse);
+			glLightfv(GL_LIGHT2, GL_SPECULAR, light2_specular);
+
+			glPushMatrix(); {
+				glTranslatef(light2_posx, light2_posy, light2_posz);
+
+				glLightfv(GL_LIGHT2, GL_POSITION, new GLfloat[]{ 0, 0, 0, 1 });
+
+				setMaterial(new GLfloat[]{ 1,1,0 }, 0, 0, 0, 1, 50);
+				gluSphere(quadratic, 0.02f, 32, 32);
+				resetMaterial();
+			}
+			glPopMatrix();
+
+		} else glDisable(GL_LIGHT2);
 
 		// Start of scene 
 		glPushMatrix(); {
@@ -196,12 +214,6 @@ void Display(void) {
 								glTranslatef(0, 0, 0.035f);
 								setMaterial(new GLfloat[]{1,1,0}, 0, 0, 0, 1, 50);
 								glutSolidSphere(0.02f, 32, 32);
-
-								// Light debugging, remove
-								glBegin(GL_LINES);
-								glVertex3f(0,0,0);
-								glVertex3f(0, 0, 1);
-								glEnd();
 
 								glLightfv(GL_LIGHT1, GL_POSITION, new GLfloat[]{0, 0, 0});
 								glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, new GLfloat[]{0,0,1});
@@ -502,8 +514,25 @@ void keyboardKeys(unsigned char key, int x, int y) {
 	case ' ':
 		shade_model = (shade_model + 1) % 2; // toggle shade model
 		break;
+	case 'e':
+		light2_posy += 0.01f;
+		break;
+	case 'q':
+		light2_posy -= 0.01f;
+		break;
+	case 'a':
+		light2_posx -= 0.01f;
+		break;
+	case 'd':
+		light2_posx += 0.01f;
+		break;
+	case 'w':
+		light2_posz -= 0.01f;
+		break;
+	case 's':
+		light2_posz += 0.01f;
+		break;
 	}
-
 	glutPostRedisplay();
 }
 
@@ -512,8 +541,6 @@ int main(int argc, char** argv) {
 	// Inicializamos la libreria GLUT
 	glutInit(&argc, argv);
 
-	printf("Welcome! \n Use the following controls to move the camera:\n F1: Camera panning [default]\n F2: Move camera\n F3: Nadir\n F4: low angle view\n F5: Normal\n F6: high angle view [default]\n F7: Zenith\n");
-
 	// Indicamos como ha de ser la nueva ventana
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(W_WIDTH, W_HEIGHT);
@@ -521,6 +548,12 @@ int main(int argc, char** argv) {
 
 	// Creamos la nueva ventana
 	glutCreateWindow("Etapa 5");
+
+	std::cout << "Welcome! \n"
+		<< "Use the following controls to move the camera : \n"
+		<< " F1 : Camera panning[default]\n F2 : Move camera\n F3 : Nadir\n"
+		<< " F4 : low angle view\n F5 : Normal\n F6 : high angle view[default]\n F7 : Zenith\n";
+	std::cout << "Use WASD to move the free light horizontally. Q and E to move it vertically \n";
 
 	// Indicamos cuales son las funciones de redibujado e idle
 	glutReshapeFunc(reshape);
