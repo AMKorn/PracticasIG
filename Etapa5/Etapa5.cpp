@@ -553,7 +553,7 @@ int main(int argc, char** argv) {
 		<< "Use the following controls to move the camera : \n"
 		<< " F1 : Camera panning[default]\n F2 : Move camera\n F3 : Nadir\n"
 		<< " F4 : low angle view\n F5 : Normal\n F6 : high angle view[default]\n F7 : Zenith\n";
-	std::cout << "Use WASD to move the free light horizontally. Q and E to move it vertically \n";
+	std::cout << "Use 2 to enable/disable the free light, WASD to move it horizontally. Q and E to move it vertically \n";
 
 	// Indicamos cuales son las funciones de redibujado e idle
 	glutReshapeFunc(reshape);

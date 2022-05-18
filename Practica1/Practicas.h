@@ -156,59 +156,88 @@ void draw_parall_material(GLfloat face_length_x, GLfloat face_length_y, GLfloat 
 // Each face is comprised of smaller squares equal to the parameter slices. This is to improve lighting.
 void draw_parall_material(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_length_z, GLint face_polygons) {
 	// Cara en el plano xy
-	glBegin(GL_POLYGON);
-	glNormal3f(0, 0, -1.0f);
-	glVertex3f(0, 0, 0);
-	glVertex3f(face_length_x, 0, 0);
-	glVertex3f(face_length_x, face_length_y, 0);
-	glVertex3f(0, face_length_y, 0);
-	glEnd();
+	glBegin(GL_TRIANGLE_STRIP);
+	glNormal3f(0, 0, -1);
+	for (int i = 0; i < face_polygons; i++) {
+		for (int j = 0; j < face_polygons; j++) {
+			glVertex3f(i * face_length_x / face_polygons, j * face_length_y / face_polygons, 0);
+			glVertex3f(i * face_length_x / face_polygons, (j + 1) * face_length_y / face_polygons, 0);
+			glVertex3f((i + 1) * face_length_x / face_polygons, j * face_length_y / face_polygons, 0);
+			glVertex3f((i + 1) * face_length_x / face_polygons, (j + 1) * face_length_y / face_polygons, 0);
+		}
+	}
 
 	//// Cara paralela al plano xy
-	glBegin(GL_POLYGON);
+	/*glBegin(GL_POLYGON);
 	glNormal3f(0, 0, 1.0f);
 	glVertex3f(0, 0, face_length_z);
 	glVertex3f(face_length_x, 0, face_length_z);
 	glVertex3f(face_length_x, face_length_y, face_length_z);
 	glVertex3f(0, face_length_y, face_length_z);
-	glEnd();
+	glEnd();*/
+	glBegin(GL_TRIANGLE_STRIP);
+	glNormal3f(0, 0, 1);
+	for (int i = 0; i < face_polygons; i++) {
+		for (int j = 0; j < face_polygons; j++) {
+			glVertex3f(i * face_length_x / face_polygons, j * face_length_y / face_polygons, face_length_z);
+			glVertex3f(i * face_length_x / face_polygons, (j + 1) * face_length_y / face_polygons, face_length_z);
+			glVertex3f((i + 1) * face_length_x / face_polygons, j * face_length_y / face_polygons, face_length_z);
+			glVertex3f((i + 1) * face_length_x / face_polygons, (j + 1) * face_length_y / face_polygons, face_length_z);
+		}
+	}
 
 	// Cara en el plano zy
-	glBegin(GL_POLYGON);
-	glNormal3f(-1.0f, 0, 0);
-	glVertex3f(0, 0, 0);
-	glVertex3f(0, 0, face_length_z);
-	glVertex3f(0, face_length_y, face_length_z);
-	glVertex3f(0, face_length_y, 0);
-	glEnd();
+	glBegin(GL_TRIANGLE_STRIP);
+	glNormal3f(-1, 0, 0);
+	for (int i = 0; i < face_polygons; i++) {
+		for (int j = 0; j < face_polygons; j++) {
+			glVertex3f(0, i * face_length_y / face_polygons, j * face_length_z / face_polygons);
+			glVertex3f(0, i * face_length_y / face_polygons, (j + 1) * face_length_z / face_polygons);
+			glVertex3f(0, (i + 1) * face_length_y / face_polygons, j * face_length_z / face_polygons);
+			glVertex3f(0, (i + 1) * face_length_y / face_polygons, (j + 1) * face_length_z / face_polygons);
+		}
+	}
 
 	// Cara paralela al plano zy
-	glBegin(GL_POLYGON);
+	/*glBegin(GL_POLYGON);
 	glNormal3f(1.0f, 0, 0);
 	glVertex3f(face_length_x, 0, 0);
 	glVertex3f(face_length_x, 0, face_length_z);
 	glVertex3f(face_length_x, face_length_y, face_length_z);
 	glVertex3f(face_length_x, face_length_y, 0);
-	glEnd();
+	glEnd();*/
+	glBegin(GL_TRIANGLE_STRIP);
+	glNormal3f(1, 0, 0);
+	for (int i = 0; i < face_polygons; i++) {
+		for (int j = 0; j < face_polygons; j++) {
+			glVertex3f(face_length_x, i * face_length_y / face_polygons, j * face_length_z / face_polygons);
+			glVertex3f(face_length_x, i * face_length_y / face_polygons, (j + 1) * face_length_z / face_polygons);
+			glVertex3f(face_length_x, (i + 1) * face_length_y / face_polygons, j * face_length_z / face_polygons);
+			glVertex3f(face_length_x, (i + 1) * face_length_y / face_polygons, (j + 1) * face_length_z / face_polygons);
+		}
+	}
 
 	// Cara en el plano xz
-	glBegin(GL_POLYGON);
+	glBegin(GL_TRIANGLE_STRIP);
+	glNormal3f(0, -1, 0);
+	for (int i = 0; i < face_polygons; i++) {
+		for (int j = 0; j < face_polygons; j++) {
+			glVertex3f(i * face_length_x / face_polygons, 0, j * face_length_z / face_polygons);
+			glVertex3f(i * face_length_x / face_polygons, 0, (j + 1) * face_length_z / face_polygons);
+			glVertex3f((i + 1) * face_length_x / face_polygons, 0, j * face_length_z / face_polygons);
+			glVertex3f((i + 1) * face_length_x / face_polygons, 0, (j + 1) * face_length_z / face_polygons);
+		}
+	}
+	glEnd();
+	/*glBegin(GL_POLYGON);
 	glNormal3f(0, -1.0f, 0);
 	glVertex3f(0, 0, 0);
 	glVertex3f(face_length_x, 0, 0);
 	glVertex3f(face_length_x, 0, face_length_z);
 	glVertex3f(0, 0, face_length_z);
-	glEnd();
-
-	// Cara paralela al plano xz
-	/*glBegin(GL_POLYGON);
-	glNormal3f(0, 1.0f, 0);
-	glVertex3f(0, face_length_y, 0);
-	glVertex3f(face_length_x, face_length_y, 0);
-	glVertex3f(face_length_x, face_length_y, face_length_z);
-	glVertex3f(0, face_length_y, face_length_z);
 	glEnd();*/
 
+	// Cara paralela al plano xz
 	glBegin(GL_TRIANGLE_STRIP);
 	glNormal3f(0, 1, 0);
 	for (int i = 0; i < face_polygons; i++) {
