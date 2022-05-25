@@ -18,6 +18,16 @@ const float RGB_MAX = 255.0f;
 const int CAM_PAN = 0;
 const int CAM_MOVE = 1;
 
+const int DEFAULT = 0;
+const int NADIR = 1;
+const int LOW_ANGLE = 2;
+const int NORMAL = 3;
+const int ZENITH = 4;
+
+const int AMBIENT = 0;
+const int LIGHT_1 = 1;
+const int LIGHT_2 = 2;
+
 // Variables for positions or vectors set as arrays
 const int x = 0;
 const int y = 1;

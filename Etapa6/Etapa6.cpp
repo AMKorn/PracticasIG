@@ -22,9 +22,10 @@ GLfloat eye_x = 1.0f, eye_y = 1.0f, eye_z = 1.0f; // Variables to manage the cam
 GLfloat center_x = 0.0f, center_y = 0.0f, center_z = 0.0f;
 GLfloat up_x = 0.0f, up_y = 1.0f, up_z = 0.0f;
 
-bool ambient_light_is_on = true;
-bool light1_is_on = true;
-bool light2_is_on = false;
+bool light_is_on[] = { true, true, false };
+//bool ambient_light_is_on = true;
+//bool light1_is_on = true;
+//bool light2_is_on = false;
 GLfloat ambient_light_value[] = { 0.5f, 0.5f, 0.5f,1 }; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
 
 //GLfloat light1_pos[] = { 0.0f, 0.0f, 0.0f, 1.0f }; // Position of light 1
@@ -81,12 +82,12 @@ void Display(void) {
 		glShadeModel(GL_FLAT);
 	}
 
-	if (ambient_light_is_on) {
+	if (light_is_on[AMBIENT]) {
 		glEnable(GL_LIGHT0);
 		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light_value);
 	} else glDisable(GL_LIGHT0);
 
-	if (light1_is_on) {
+	if (light_is_on[LIGHT_1]) {
 		glEnable(GL_LIGHT1);
 		glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_value);
 		glLighti(GL_LIGHT1, GL_SPOT_CUTOFF, 45);
@@ -102,7 +103,7 @@ void Display(void) {
 			up_x, up_y, up_z);
 
 		// Free light 
-		if (light2_is_on) {
+		if (light_is_on[LIGHT_2]) {
 			glEnable(GL_LIGHT2);
 			glLightfv(GL_LIGHT2, GL_AMBIENT, light2_ambient);
 			glLightfv(GL_LIGHT2, GL_DIFFUSE, light2_diffuse);
@@ -173,7 +174,7 @@ void Display(void) {
 						glTranslatef(lamp_base_radius / 3, 0, 0);
 						glColor3f(0, 0, 0);
 						GLfloat switch_height = 0.01f;
-						if (light1_is_on) switch_height /= 3;
+						if (light_is_on[LIGHT_1]) switch_height /= 3;
 
 						gluCylinder(quadratic, 0.005f, 0.005f, switch_height, 16, 1);
 						glTranslatef(0, 0, switch_height);
@@ -212,7 +213,12 @@ void Display(void) {
 
 								resetMaterial();
 								glTranslatef(0, 0, 0.035f);
-								setMaterial(new GLfloat[]{ 1,1,0 }, 0, 0, 0, 1, 50);
+								// Set the material with emission to 1 or to 0 depending on if the light is on
+								if (light_is_on[LIGHT_1]) {
+									setMaterial(new GLfloat[]{ 1,1,0 }, 0, 0, 0, 1, 50);
+								} else {
+									setMaterial(new GLfloat[]{ 1,1,1 }, 0, 0, 0, 0, 50);
+								}
 								glutSolidSphere(0.02f, 32, 32);
 
 								glLightfv(GL_LIGHT1, GL_POSITION, new GLfloat[]{ 0, 0, 0 });
@@ -288,6 +294,69 @@ void reshape(int width, int height) {
 	glViewport(0.0f, 0.0f, W_WIDTH * scale_w, W_HEIGHT * scale_h);
 }
 
+void setPerspective(int perspective) {
+	switch (perspective) {
+	case NADIR:
+		eye_x = 0.5f;
+		eye_y = -1.0f;
+		eye_z = 0.5f;
+		center_x = 0.5f;
+		center_y = 0.0f;
+		center_z = 0.5f;
+		up_x = 0.0f;
+		up_y = 0.0f;
+		up_z = 1.0f;
+		break;
+	case LOW_ANGLE:
+		eye_x = 1.0f;
+		eye_y = 0.0f;
+		eye_z = 1.0f;
+		center_x = 0.5f;
+		center_y = 0.5f;
+		center_z = 0.5f;
+		up_x = 0.0f;
+		up_y = 1.0f;
+		up_z = 0.0f;
+		break;
+	case NORMAL:
+		eye_x = 1.0f;
+		eye_y = 0.5f;
+		eye_z = 1.0f;
+		center_x = 0.5f;
+		center_y = 0.5f;
+		center_z = 0.5f;
+		up_x = 0.0f;
+		up_y = 1.0f;
+		up_z = 0.0f;
+		break;
+	case ZENITH:
+		eye_x = 0.5f;
+		eye_y = 1.0f;
+		eye_z = 0.5f;
+		center_x = 0.5f;
+		center_y = 0.0f;
+		center_z = 0.5f;
+		up_x = 0.0f;
+		up_y = 0.0f;
+		up_z = 1.0f;
+		break;
+	default:
+		eye_x = 1.0f;
+		eye_y = 1.0f;
+		eye_z = 1.0f;
+		center_x = 0.0f;
+		center_y = 0.0f;
+		center_z = 0.0f;
+		up_x = 0.0f;
+		up_y = 1.0f;
+		up_z = 0.0f;
+	}
+}
+
+void toggleLights(int light) {
+	light_is_on[light] = !light_is_on[light];
+}
+
 // Función para escuchar las teclas
 void specialKeys(int key, int x, int y) {
 	GLfloat module;
@@ -304,63 +373,23 @@ void specialKeys(int key, int x, int y) {
 		break;
 	case GLUT_KEY_F3:
 		std::cout << "Set: Nadir plane\n [Camera move not supported]\n";
-		eye_x = 0.5f;
-		eye_y = -1.0f;
-		eye_z = 0.5f;
-		center_x = 0.5f;
-		center_y = 0.0f;
-		center_z = 0.5f;
-		up_x = 0.0f;
-		up_y = 0.0f;
-		up_z = 1.0f;
+		setPerspective(NADIR);
 		break;
 	case GLUT_KEY_F4:
 		std::cout << "Set: Low angle view\n";
-		eye_x = 1.0f;
-		eye_y = 0.0f;
-		eye_z = 1.0f;
-		center_x = 0.5f;
-		center_y = 0.5f;
-		center_z = 0.5f;
-		up_x = 0.0f;
-		up_y = 1.0f;
-		up_z = 0.0f;
+		setPerspective(LOW_ANGLE);
 		break;
 	case GLUT_KEY_F5:
 		std::cout << "Set: Normal view\n";
-		eye_x = 1.0f;
-		eye_y = 0.5f;
-		eye_z = 1.0f;
-		center_x = 0.5f;
-		center_y = 0.5f;
-		center_z = 0.5f;
-		up_x = 0.0f;
-		up_y = 1.0f;
-		up_z = 0.0f;
+		setPerspective(NORMAL);
 		break;
 	case GLUT_KEY_F6:
 		std::cout << "Set: High angle view\n";
-		eye_x = 1.0f;
-		eye_y = 1.0f;
-		eye_z = 1.0f;
-		center_x = 0.0f;
-		center_y = 0.0f;
-		center_z = 0.0f;
-		up_x = 0.0f;
-		up_y = 1.0f;
-		up_z = 0.0f;
+		setPerspective(DEFAULT);
 		break;
 	case GLUT_KEY_F7:
 		std::cout << "Set: Zenith view\n [Camera move not supported]\n";
-		eye_x = 0.5f;
-		eye_y = 1.0f;
-		eye_z = 0.5f;
-		center_x = 0.5f;
-		center_y = 0.0f;
-		center_z = 0.5f;
-		up_x = 0.0f;
-		up_y = 0.0f;
-		up_z = 1.0f;
+		setPerspective(ZENITH);
 		break;
 	case GLUT_KEY_RIGHT:
 		if (camera_mode == CAM_PAN) {
@@ -497,13 +526,13 @@ void specialKeys(int key, int x, int y) {
 void keyboardKeys(unsigned char key, int x, int y) {
 	switch (key) {
 	case 'l':
-		ambient_light_is_on = !ambient_light_is_on;
+		toggleLights(AMBIENT);
 		break;
 	case '1':
-		light1_is_on = !light1_is_on;
+		toggleLights(LIGHT_1);
 		break;
 	case '2':
-		light2_is_on = !light2_is_on;
+		toggleLights(LIGHT_2);
 		break;
 	case ' ':
 		shade_model = (shade_model + 1) % 2; // toggle shade model
@@ -528,6 +557,30 @@ void keyboardKeys(unsigned char key, int x, int y) {
 		break;
 	}
 	glutPostRedisplay();
+}
+
+void createMenu() {
+	int idMenuDefault = glutCreateMenu(setPerspective);
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
+
+	glutAddMenuEntry("Default perspective", DEFAULT);
+
+	int idMenuNonDefault = glutCreateMenu(setPerspective);
+	glutAddMenuEntry("Nadir", NADIR);
+	glutAddMenuEntry("Low angle", LOW_ANGLE);
+	glutAddMenuEntry("Normal", NORMAL);
+	glutAddMenuEntry("Zenith", ZENITH);
+
+	glutSetMenu(idMenuDefault);
+	glutAddSubMenu("Other perspectives", idMenuNonDefault);
+
+	int idMenuLights = glutCreateMenu(toggleLights);
+	glutAddMenuEntry("Ambient light", AMBIENT);
+	glutAddMenuEntry("Lamp light", LIGHT_1);
+	glutAddMenuEntry("Free light", LIGHT_2);
+
+	glutSetMenu(idMenuDefault);
+	glutAddSubMenu("Toggle lights", idMenuLights);
 }
 
 // Funcion principal
@@ -555,6 +608,7 @@ int main(int argc, char** argv) {
 	glutSpecialFunc(specialKeys);
 	glutKeyboardFunc(keyboardKeys);
 	glutIdleFunc(Idle);
+	createMenu();
 
 	// Establecemos que inv_quadratic tiene que tener las normales para el interior
 	gluQuadricOrientation(inv_quadratic, GLU_INSIDE);
