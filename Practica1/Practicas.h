@@ -24,6 +24,8 @@ const int LOW_ANGLE = 2;
 const int NORMAL = 3;
 const int ZENITH = 4;
 
+const int PAUSED = 5;
+
 const int AMBIENT = 0;
 const int LIGHT_1 = 1;
 const int LIGHT_2 = 2;

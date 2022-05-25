@@ -10,7 +10,7 @@ const int W_HEIGHT = 700;
 
 // Boolean to state if axes are to be shown. 
 const bool SHOW_AXES = false;
-const bool IS_IDLE = true;
+bool is_idle = true;
 
 // Constant to state the distance a camera jump makes with each input
 const GLfloat CAM_JUMP = 0.05f;
@@ -23,9 +23,6 @@ GLfloat center_x = 0.0f, center_y = 0.0f, center_z = 0.0f;
 GLfloat up_x = 0.0f, up_y = 1.0f, up_z = 0.0f;
 
 bool light_is_on[] = { true, true, false };
-//bool ambient_light_is_on = true;
-//bool light1_is_on = true;
-//bool light2_is_on = false;
 GLfloat ambient_light_value[] = { 0.5f, 0.5f, 0.5f,1 }; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
 
 //GLfloat light1_pos[] = { 0.0f, 0.0f, 0.0f, 1.0f }; // Position of light 1
@@ -262,8 +259,8 @@ void Display(void) {
 // Funcion que se ejecuta cuando el sistema no esta ocupado. Sin usar.
 void Idle(void) {
 	// Incrementamos el angulo
-	if (!IS_IDLE) {
-		lamp_angle += 0.03f * rotation_direction;
+	if (!is_idle) {
+		lamp_angle += 0.3f * rotation_direction;
 		// Si es mayor que dos pi la decrementamos
 		if (lamp_angle > MAX_LAMP_ANGLE) {
 			rotation_direction = -1;
@@ -294,8 +291,11 @@ void reshape(int width, int height) {
 	glViewport(0.0f, 0.0f, W_WIDTH * scale_w, W_HEIGHT * scale_h);
 }
 
-void setPerspective(int perspective) {
-	switch (perspective) {
+// This functions modifies perspective and whether the animation is paused or not. It also functions as a menu listener, 
+// but it has this very cool name as artistic liberty because it is also called in other places of the code in which 
+// it would not make much sense to call it menuListener.
+void setTimeAndSpace(int value) {
+	switch (value) {
 	case NADIR:
 		eye_x = 0.5f;
 		eye_y = -1.0f;
@@ -340,6 +340,9 @@ void setPerspective(int perspective) {
 		up_y = 0.0f;
 		up_z = 1.0f;
 		break;
+	case PAUSED:
+		is_idle = !is_idle;
+		break;
 	default:
 		eye_x = 1.0f;
 		eye_y = 1.0f;
@@ -373,23 +376,23 @@ void specialKeys(int key, int x, int y) {
 		break;
 	case GLUT_KEY_F3:
 		std::cout << "Set: Nadir plane\n [Camera move not supported]\n";
-		setPerspective(NADIR);
+		setTimeAndSpace(NADIR);
 		break;
 	case GLUT_KEY_F4:
 		std::cout << "Set: Low angle view\n";
-		setPerspective(LOW_ANGLE);
+		setTimeAndSpace(LOW_ANGLE);
 		break;
 	case GLUT_KEY_F5:
 		std::cout << "Set: Normal view\n";
-		setPerspective(NORMAL);
+		setTimeAndSpace(NORMAL);
 		break;
 	case GLUT_KEY_F6:
 		std::cout << "Set: High angle view\n";
-		setPerspective(DEFAULT);
+		setTimeAndSpace(DEFAULT);
 		break;
 	case GLUT_KEY_F7:
 		std::cout << "Set: Zenith view\n [Camera move not supported]\n";
-		setPerspective(ZENITH);
+		setTimeAndSpace(ZENITH);
 		break;
 	case GLUT_KEY_RIGHT:
 		if (camera_mode == CAM_PAN) {
@@ -560,12 +563,12 @@ void keyboardKeys(unsigned char key, int x, int y) {
 }
 
 void createMenu() {
-	int idMenuDefault = glutCreateMenu(setPerspective);
+	int idMenuDefault = glutCreateMenu(setTimeAndSpace);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	glutAddMenuEntry("Default perspective", DEFAULT);
 
-	int idMenuNonDefault = glutCreateMenu(setPerspective);
+	int idMenuNonDefault = glutCreateMenu(setTimeAndSpace);
 	glutAddMenuEntry("Nadir", NADIR);
 	glutAddMenuEntry("Low angle", LOW_ANGLE);
 	glutAddMenuEntry("Normal", NORMAL);
@@ -581,6 +584,8 @@ void createMenu() {
 
 	glutSetMenu(idMenuDefault);
 	glutAddSubMenu("Toggle lights", idMenuLights);
+
+	glutAddMenuEntry("Pause/Play animation", PAUSED);
 }
 
 // Funcion principal
