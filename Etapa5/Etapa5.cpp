@@ -10,7 +10,7 @@ const int W_HEIGHT = 700;
 
 // Boolean to state if axes are to be shown. 
 const bool SHOW_AXES = false;
-const bool is_idle = true;
+const bool is_paused = true;
 
 // Constant to state the distance a camera jump makes with each input
 const GLfloat CAM_JUMP = 0.05f;
@@ -256,7 +256,7 @@ void Display(void) {
 // Funcion que se ejecuta cuando el sistema no esta ocupado. Sin usar.
 void Idle(void) {
 	// Incrementamos el angulo
-	if (!is_idle) {
+	if (!is_paused) {
 		lamp_angle += 0.03f * rotation_direction;
 		// Si es mayor que dos pi la decrementamos
 		if (lamp_angle > MAX_LAMP_ANGLE) {

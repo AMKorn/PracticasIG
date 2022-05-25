@@ -5,6 +5,7 @@
 #include <GL/glut.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include <iostream>
 
@@ -18,17 +19,18 @@ const float RGB_MAX = 255.0f;
 const int CAM_PAN = 0;
 const int CAM_MOVE = 1;
 
-// Values for different perspectives 
-const int DEFAULT = 0;
-const int NADIR = 1;
-const int LOW_ANGLE = 2;
-const int NORMAL = 3;
-const int ZENITH = 4;
+// Values for different perspectives
+const int PERSPECTIVE_DEFAULT = 2;
+const int PERSPECTIVE_NADIR = 3;
+const int PERSPECTIVE_LOW_ANGLE = 4;
+const int PERSPECTIVE_NORMAL = 5;
+const int PERSPECTIVE_ZENITH = 6;
 
-const int PAUSED = 5;
+const int ANIMATION_PAUSE = 7;
+const int ANIMATION_RESET = 8;
 
 // Constants for the different lights
-const int AMBIENT = 0;
+const int LIGHT_AMBIENT = 0;
 const int LIGHT_1 = 1;
 const int LIGHT_2 = 2;
 
@@ -345,7 +347,6 @@ void draw_rectangle(GLfloat dim_x, GLfloat dim_y) {
 */
 void draw_ellipse(float center_x, float center_y, float radius_x, float radius_y, int drawn_angle) {
 	glBegin(GL_TRIANGLE_FAN);
-	glNormal3f(0, 0, 1);
 	glVertex2f(center_x, center_y);
 	for (int i = 0; i <= drawn_angle; i++) {
 		float theta = 2.0f * 3.1415926f * float(i) / float(360); //get the current angle 

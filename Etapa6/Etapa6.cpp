@@ -10,7 +10,7 @@ const int W_HEIGHT = 700;
 
 // Boolean to state if axes are to be shown. 
 const bool SHOW_AXES = false;
-bool is_idle = true;
+bool is_paused = true;
 
 // Constant to state the distance a camera jump makes with each input
 const GLfloat CAM_JUMP = 0.05f;
@@ -50,12 +50,15 @@ GLfloat table_surface[] = { 0.75f, 0.05f, 0.5f };
 GLfloat table_leg[] = { 0.05f, table_height - table_surface[y], 0.05f };
 
 // * Lamp values *
-GLfloat lamp_position[] = { table_surface[x] / 3, table_height, table_surface[z] / 2 };
+const GLfloat INIT_LAMP_POSITION[] = { table_surface[x] / 4, table_height, table_surface[z] / 2 };
+GLfloat lamp_position[] = { INIT_LAMP_POSITION[x], INIT_LAMP_POSITION[y], INIT_LAMP_POSITION[z] };
 
 GLfloat lamp_base_radius = 0.05f, lamp_base_height = 0.025f;
 GLfloat lamp_arm_radius = lamp_base_radius / 5, lamp_arm_length = 0.1f;
 
 GLfloat lamp_cone_width = lamp_arm_radius * 4;
+const GLfloat INIT_LAMP_CONE_ANGLE[] = { 0, 80, 0 };
+GLfloat lamp_cone_angle[] = { INIT_LAMP_CONE_ANGLE[x], INIT_LAMP_CONE_ANGLE[y], INIT_LAMP_CONE_ANGLE[z] };
 
 GLfloat lamp_angle = 90.0f;
 GLfloat MAX_LAMP_ANGLE = 90.0f;
@@ -64,6 +67,12 @@ GLint rotation_direction = 1;
 // * Ball values *
 GLfloat ball_position[] = { table_surface[x] * 2 / 3, table_height, table_surface[z] / 2 };
 GLfloat ball_radius = 0.05f;
+
+// * Animation values *
+const int ANIMATION_LENGTH = 60;
+const GLfloat MAX_LAMP_BOUNCE = 0.1f;
+int animation_time = 0;
+bool lamp_is_jumping = true;
 
 // Funcion que visualiza la escena OpenGL
 void Display(void) {
@@ -79,7 +88,7 @@ void Display(void) {
 		glShadeModel(GL_FLAT);
 	}
 
-	if (light_is_on[AMBIENT]) {
+	if (light_is_on[LIGHT_AMBIENT]) {
 		glEnable(GL_LIGHT0);
 		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light_value);
 	} else glDisable(GL_LIGHT0);
@@ -163,9 +172,13 @@ void Display(void) {
 					setMaterial(lamp_accents_color, 1, 1, 0.5f, 0, 0.5f);
 					gluCylinder(quadratic, lamp_base_radius, lamp_base_radius, lamp_base_height, 32, 1);
 
+					glNormal3f(0, 0, -1);
+					draw_ellipse(0, 0, lamp_base_radius, lamp_base_radius, 360);
+
 					// Start of the top of the lamp base
 					glPushMatrix(); {
 						glTranslatef(0, 0, lamp_base_height);
+						glNormal3f(0, 0, 1);
 						draw_ellipse(0, 0, lamp_base_radius, lamp_base_radius, 360);
 
 						glTranslatef(lamp_base_radius / 3, 0, 0);
@@ -202,7 +215,10 @@ void Display(void) {
 							// Lamp cone + lightbulb
 							glPushMatrix(); {
 								glTranslatef(0, 0, lamp_arm_length);
-								glRotated(lamp_angle - 10, 0, 1, 0);
+								glRotatef(lamp_cone_angle[x], 1, 0, 0);
+								glRotatef(lamp_cone_angle[y], 0, 1, 0);
+								glRotatef(lamp_cone_angle[z], 0, 0, 1);
+								//glRotated(lamp_angle - 20, 0, 1, 0);
 								setMaterial(lamp_accents_color, 1, 1, 0.5f, 0, 0.5f);
 								glutSolidSphere(lamp_arm_radius * 3 / 2, 32, 32);
 								gluCylinder(quadratic, lamp_arm_radius, lamp_cone_width, lamp_arm_length / 2, 32, 32);
@@ -256,16 +272,39 @@ void Display(void) {
 	glutSwapBuffers();
 }
 
+void reset_animation() {
+	lamp_position[x] = INIT_LAMP_POSITION[x];
+	lamp_position[y] = INIT_LAMP_POSITION[y];
+	lamp_position[z] = INIT_LAMP_POSITION[z];
+
+	animation_time = 0;
+}
+
 // Funcion que se ejecuta cuando el sistema no esta ocupado. Sin usar.
 void Idle(void) {
 	// Incrementamos el angulo
-	if (!is_idle) {
-		lamp_angle += 0.3f * rotation_direction;
-		// Si es mayor que dos pi la decrementamos
-		if (lamp_angle > MAX_LAMP_ANGLE) {
-			rotation_direction = -1;
-		} else if (lamp_angle < 0) {
-			rotation_direction = 1;
+	if (!is_paused) {
+		//lamp_angle += 0.3f * rotation_direction;
+		//// Si es mayor que dos pi la decrementamos
+		//if (lamp_angle > MAX_LAMP_ANGLE) {
+		//	rotation_direction = -1;
+		//} else if (lamp_angle < 0) {
+		//	rotation_direction = 1;
+		//}
+
+		if (animation_time <= 30) {
+			lamp_position[x] += 0.01f;
+			GLfloat lamp_height = sinf(M_PI * (float)animation_time / (ANIMATION_LENGTH / 4));
+			lamp_position[y] = table_height + abs(lamp_height * MAX_LAMP_BOUNCE);
+			lamp_angle += 2 * lamp_height;
+			std::cout << lamp_height << "\n";
+		} else if(animation_time <= 40) {
+
+		}
+
+		animation_time++;
+		if (animation_time >= ANIMATION_LENGTH) {
+			reset_animation();
 		}
 	}
 	// Indicamos que es necesario repintar la pantalla
@@ -284,10 +323,6 @@ void reshape(int width, int height) {
 		scale_h = scale_w;
 	}
 
-	/*gluPerspective(90, (GLfloat)W_WIDTH * scale_w / (GLfloat)W_HEIGHT * scale_h, 0, 100);
-	gluLookAt(0.0f, 0.0f, 5.0f,		// eye
-			  0.0f, 0.0f, 0.0f,		// center
-			  0.0f, 1.0f, 0.0f);	// up */
 	glViewport(0.0f, 0.0f, W_WIDTH * scale_w, W_HEIGHT * scale_h);
 }
 
@@ -296,18 +331,18 @@ void reshape(int width, int height) {
 // it would not make much sense to call it menuListener.
 void setTimeAndSpace(int value) {
 	switch (value) {
-	case NADIR:
-		eye_x = 0.5f;
+	case PERSPECTIVE_NADIR:
+		eye_x = table_surface[x] / 2;
 		eye_y = -1.0f;
-		eye_z = 0.5f;
-		center_x = 0.5f;
+		eye_z = table_surface[z] / 2;
+		center_x = table_surface[x] / 2;
 		center_y = 0.0f;
-		center_z = 0.5f;
+		center_z = table_surface[z] / 2;
 		up_x = 0.0f;
 		up_y = 0.0f;
 		up_z = 1.0f;
 		break;
-	case LOW_ANGLE:
+	case PERSPECTIVE_LOW_ANGLE:
 		eye_x = 1.0f;
 		eye_y = 0.0f;
 		eye_z = 1.0f;
@@ -318,7 +353,7 @@ void setTimeAndSpace(int value) {
 		up_y = 1.0f;
 		up_z = 0.0f;
 		break;
-	case NORMAL:
+	case PERSPECTIVE_NORMAL:
 		eye_x = 1.0f;
 		eye_y = 0.5f;
 		eye_z = 1.0f;
@@ -329,19 +364,22 @@ void setTimeAndSpace(int value) {
 		up_y = 1.0f;
 		up_z = 0.0f;
 		break;
-	case ZENITH:
-		eye_x = 0.5f;
-		eye_y = 1.0f;
-		eye_z = 0.5f;
-		center_x = 0.5f;
+	case PERSPECTIVE_ZENITH:
+		eye_x = table_surface[x] / 2;
+		eye_y = 1.5f;
+		eye_z = table_surface[z] / 2;
+		center_x = table_surface[x] / 2;
 		center_y = 0.0f;
-		center_z = 0.5f;
+		center_z = table_surface[z] / 2;
 		up_x = 0.0f;
 		up_y = 0.0f;
-		up_z = 1.0f;
+		up_z = -1.0f;
 		break;
-	case PAUSED:
-		is_idle = !is_idle;
+	case ANIMATION_PAUSE:
+		is_paused = !is_paused;
+		break;
+	case ANIMATION_RESET:
+		reset_animation();
 		break;
 	default:
 		eye_x = 1.0f;
@@ -376,23 +414,23 @@ void specialKeys(int key, int x, int y) {
 		break;
 	case GLUT_KEY_F3:
 		std::cout << "Set: Nadir plane\n [Camera move not supported]\n";
-		setTimeAndSpace(NADIR);
+		setTimeAndSpace(PERSPECTIVE_NADIR);
 		break;
 	case GLUT_KEY_F4:
 		std::cout << "Set: Low angle view\n";
-		setTimeAndSpace(LOW_ANGLE);
+		setTimeAndSpace(PERSPECTIVE_LOW_ANGLE);
 		break;
 	case GLUT_KEY_F5:
 		std::cout << "Set: Normal view\n";
-		setTimeAndSpace(NORMAL);
+		setTimeAndSpace(PERSPECTIVE_NORMAL);
 		break;
 	case GLUT_KEY_F6:
 		std::cout << "Set: High angle view\n";
-		setTimeAndSpace(DEFAULT);
+		setTimeAndSpace(PERSPECTIVE_DEFAULT);
 		break;
 	case GLUT_KEY_F7:
 		std::cout << "Set: Zenith view\n [Camera move not supported]\n";
-		setTimeAndSpace(ZENITH);
+		setTimeAndSpace(PERSPECTIVE_ZENITH);
 		break;
 	case GLUT_KEY_RIGHT:
 		if (camera_mode == CAM_PAN) {
@@ -529,7 +567,7 @@ void specialKeys(int key, int x, int y) {
 void keyboardKeys(unsigned char key, int x, int y) {
 	switch (key) {
 	case 'l':
-		toggleLights(AMBIENT);
+		toggleLights(LIGHT_AMBIENT);
 		break;
 	case '1':
 		toggleLights(LIGHT_1);
@@ -558,6 +596,9 @@ void keyboardKeys(unsigned char key, int x, int y) {
 	case 's':
 		light2_posz += 0.01f;
 		break;
+	case 'p':
+		setTimeAndSpace(ANIMATION_PAUSE);
+		break;
 	}
 	glutPostRedisplay();
 }
@@ -566,26 +607,27 @@ void createMenu() {
 	int idMenuDefault = glutCreateMenu(setTimeAndSpace);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
-	glutAddMenuEntry("Default perspective", DEFAULT);
+	glutAddMenuEntry("Default perspective", PERSPECTIVE_DEFAULT);
 
 	int idMenuNonDefault = glutCreateMenu(setTimeAndSpace);
-	glutAddMenuEntry("Nadir", NADIR);
-	glutAddMenuEntry("Low angle", LOW_ANGLE);
-	glutAddMenuEntry("Normal", NORMAL);
-	glutAddMenuEntry("Zenith", ZENITH);
+	glutAddMenuEntry("Nadir", PERSPECTIVE_NADIR);
+	glutAddMenuEntry("Low angle", PERSPECTIVE_LOW_ANGLE);
+	glutAddMenuEntry("Normal", PERSPECTIVE_NORMAL);
+	glutAddMenuEntry("Zenith", PERSPECTIVE_ZENITH);
 
 	glutSetMenu(idMenuDefault);
 	glutAddSubMenu("Other perspectives", idMenuNonDefault);
 
 	int idMenuLights = glutCreateMenu(toggleLights);
-	glutAddMenuEntry("Ambient light", AMBIENT);
+	glutAddMenuEntry("Ambient light", LIGHT_AMBIENT);
 	glutAddMenuEntry("Lamp light", LIGHT_1);
 	glutAddMenuEntry("Free light", LIGHT_2);
 
 	glutSetMenu(idMenuDefault);
 	glutAddSubMenu("Toggle lights", idMenuLights);
 
-	glutAddMenuEntry("Pause/Play animation", PAUSED);
+	glutAddMenuEntry("Pause/Play animation", ANIMATION_PAUSE);
+	glutAddMenuEntry("Restart animation", ANIMATION_RESET);
 }
 
 // Funcion principal
@@ -605,7 +647,8 @@ int main(int argc, char** argv) {
 		<< "Use the following controls to move the camera : \n"
 		<< " F1 : Camera panning[default]\n F2 : Move camera\n F3 : Nadir\n"
 		<< " F4 : low angle view\n F5 : Normal\n F6 : high angle view[default]\n F7 : Zenith\n";
-	std::cout << "Use 2 to enable/disable the free light, WASD to move it horizontally. Q and E to move it vertically \n";
+	std::cout << "Use 2 to enable/disable the free light, WASD to move it horizontally. Q and E to move it vertically.\n";
+	std::cout << "Press P to pause or play the animation.\n";
 
 	// Indicamos cuales son las funciones de redibujado e idle
 	glutReshapeFunc(reshape);
