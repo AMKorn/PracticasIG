@@ -18,6 +18,7 @@ const float RGB_MAX = 255.0f;
 const int CAM_PAN = 0;
 const int CAM_MOVE = 1;
 
+// Values for different perspectives 
 const int DEFAULT = 0;
 const int NADIR = 1;
 const int LOW_ANGLE = 2;
@@ -26,29 +27,31 @@ const int ZENITH = 4;
 
 const int PAUSED = 5;
 
+// Constants for the different lights
 const int AMBIENT = 0;
 const int LIGHT_1 = 1;
 const int LIGHT_2 = 2;
 
-// Variables for positions or vectors set as arrays
+// Constants for positions or vectors set as arrays
 const int x = 0;
 const int y = 1;
 const int z = 2;
 
-// Variables for colors set as arrays
+// Constants for colors set as arrays
 const int RED = 0;
 const int GREEN = 1;
 const int BLUE = 2;
 const int ALPHA = 3;
 
+// Default values for materials, as stated in https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glMaterial.xml
 const GLfloat AMBIENT_DEF = 0.2f;
 const GLfloat DIFFUSE_DEF = 0.8f;
 const GLfloat SPECULAR_DEF = 0;
 const GLfloat EMISSION_DEF = 0;
 const GLfloat SHININESS_DEF = 0;
 
-GLUquadricObj* quadratic = gluNewQuadric();
-GLUquadricObj* inv_quadratic = gluNewQuadric();
+GLUquadricObj* quadratic = gluNewQuadric(); // quadratic for the different glu primitives that require it
+GLUquadricObj* inv_quadratic = gluNewQuadric(); // inverted quadratic, for use when something's inside is being drawn
 
 void setMaterial(GLfloat color[3], GLfloat ambient_level, GLfloat diffuse_level, GLfloat specular_level, GLfloat emission_level, GLfloat shininess) {
 	GLfloat red = color[RED];
