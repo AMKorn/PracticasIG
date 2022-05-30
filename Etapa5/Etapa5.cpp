@@ -59,8 +59,8 @@ GLfloat lamp_arm_radius = lamp_base_radius / 5, lamp_arm_length = 0.1f;
 
 GLfloat lamp_cone_width = lamp_arm_radius * 4;
 
-GLfloat lamp_angle = 90.0f;
-GLfloat MAX_LAMP_ANGLE = 90.0f;
+GLfloat lamp_articulation_angle = 90.0f;
+GLfloat MAX_LAMP_ARTICULATION_ANGLE = 90.0f;
 GLint rotation_direction = 1;
 
 // * Ball values *
@@ -197,14 +197,14 @@ void Display(void) {
 
 						// Second bone of the lamp
 						glPushMatrix(); {
-							glRotated(lamp_angle, 0, 1, 0);
+							glRotated(lamp_articulation_angle, 0, 1, 0);
 							setMaterial(lamp_arms_color, 1, 1, 0.5f, 0, 0.5f);
 							gluCylinder(quadratic, lamp_arm_radius, lamp_arm_radius, lamp_arm_length, 32, 1);
 
 							// Lamp cone + lightbulb
 							glPushMatrix(); {
 								glTranslatef(0, 0, lamp_arm_length);
-								glRotated(lamp_angle - 10, 0, 1, 0);
+								glRotated(lamp_articulation_angle - 10, 0, 1, 0);
 								setMaterial(lamp_accents_color, 1, 1, 0.5f, 0, 0.5f);
 								glutSolidSphere(lamp_arm_radius * 3 / 2, 32, 32);
 								gluCylinder(quadratic, lamp_arm_radius, lamp_cone_width, lamp_arm_length / 2, 32, 32);
@@ -257,12 +257,12 @@ void Display(void) {
 void Idle(void) {
 	// Incrementamos el angulo
 	if (!is_paused) {
-		lamp_angle += 0.03f * rotation_direction;
+		lamp_articulation_angle += 0.03f * rotation_direction;
 		// Si es mayor que dos pi la decrementamos
-		if (lamp_angle > MAX_LAMP_ANGLE) {
+		if (lamp_articulation_angle > MAX_LAMP_ARTICULATION_ANGLE) {
 			rotation_direction = -1;
 		}
-		else if (lamp_angle < 0) {
+		else if (lamp_articulation_angle < 0) {
 			rotation_direction = 1;
 		}
 	}

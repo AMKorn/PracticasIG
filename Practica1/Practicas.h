@@ -2,12 +2,12 @@
 // Header a ser usado por todas las otras etapas del
 // proyecto
 ////////////////////////////////////////////////////
+#include <iostream>
 #include <GL/glut.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <iostream>
 
 // As most color pickers online give the values in
 // 0-255 instead of 0-1, which openGL uses, this
@@ -28,6 +28,8 @@ const int PERSPECTIVE_ZENITH = 6;
 
 const int ANIMATION_PAUSE = 7;
 const int ANIMATION_RESET = 8;
+
+const int AXES_TOGGLE = 9;
 
 // Constants for the different lights
 const int LIGHT_AMBIENT = 0;
@@ -79,37 +81,36 @@ void draw_axes() {
 	resetMaterial();
 
 	// x-axis
-	glPushMatrix();
+	glPushMatrix(); {
 		glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
 		glColor3f(1.0f, 0.0f, 0.0f);
 		gluCylinder(quadratic, 0.005f, 0.005f, 0.5f, 32, 32);
-		glPushMatrix();
+		glPushMatrix(); {
 			glTranslatef(0.0f, 0.0f, 0.5f);
 			glutSolidCone(0.01f, 0.1f, 32, 32);
-		glPopMatrix();
-	glPopMatrix();
+		}glPopMatrix();
+	}glPopMatrix();
 
 	// y-axis
-	glPushMatrix();
+	glPushMatrix(); {
 		glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
 		glColor3f(0.0f, 1.0f, 0.0f);
 		gluCylinder(quadratic, 0.005f, 0.005f, 0.5f, 32, 32);
-		glPushMatrix();
+		glPushMatrix(); {
 			glTranslatef(0.0f, 0.0f, 0.5f);
 			glutSolidCone(0.01f, 0.1f, 32, 32);
-		glPopMatrix();
-	glPopMatrix();
+		}glPopMatrix();
+	}glPopMatrix();
 
 	// z-axis
-	glPushMatrix();
-		//glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+	glPushMatrix(); {
 		glColor3f(0.0f, 0.0f, 1.0f);
 		gluCylinder(quadratic, 0.005f, 0.005f, 0.5f, 32, 32);
-		glPushMatrix();
+		glPushMatrix(); {
 			glTranslatef(0.0f, 0.0f, 0.5f);
 			glutSolidCone(0.01f, 0.1f, 32, 32);
-		glPopMatrix();
-	glPopMatrix();
+		}glPopMatrix();
+	}glPopMatrix();
 }
 
 // Draws a parallelepiped with the given dimensions with a vertex in 0,0,0 with the current color and material.

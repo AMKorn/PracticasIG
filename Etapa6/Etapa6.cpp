@@ -9,7 +9,7 @@ const int W_WIDTH = 700;
 const int W_HEIGHT = 700;
 
 // Boolean to state if axes are to be shown. 
-const bool SHOW_AXES = false;
+bool show_axes = false;
 bool is_paused = true;
 
 // Constant to state the distance a camera jump makes with each input
@@ -23,7 +23,7 @@ GLfloat center_x = 0.0f, center_y = 0.0f, center_z = 0.0f;
 GLfloat up_x = 0.0f, up_y = 1.0f, up_z = 0.0f;
 
 bool light_is_on[] = { true, true, false };
-GLfloat ambient_light_value[] = { 0.5f, 0.5f, 0.5f,1 }; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
+GLfloat ambient_light_value[] = { 0.5f, 0.5f, 0.5f, 1 }; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
 
 //GLfloat light1_pos[] = { 0.0f, 0.0f, 0.0f, 1.0f }; // Position of light 1
 GLfloat light1_value[] = { 1, 1, 1, 1 }; // { 0.0f, 1.0f, 1.0f, 1.0f }; // Values of light 1 (RGBA)
@@ -52,6 +52,8 @@ GLfloat table_leg[] = { 0.05f, table_height - table_surface[y], 0.05f };
 // * Lamp values *
 const GLfloat INIT_LAMP_POSITION[] = { table_surface[x] / 4, table_height, table_surface[z] / 2 };
 GLfloat lamp_position[] = { INIT_LAMP_POSITION[x], INIT_LAMP_POSITION[y], INIT_LAMP_POSITION[z] };
+const GLfloat INIT_LAMP_DIRECTION = 0;
+GLfloat lamp_direction = INIT_LAMP_DIRECTION; // Angle to rotate the lamp around its base
 
 GLfloat lamp_base_radius = 0.05f, lamp_base_height = 0.025f;
 GLfloat lamp_arm_radius = lamp_base_radius / 5, lamp_arm_length = 0.1f;
@@ -60,8 +62,9 @@ GLfloat lamp_cone_width = lamp_arm_radius * 4;
 const GLfloat INIT_LAMP_CONE_ANGLE[] = { 0, 80, 0 };
 GLfloat lamp_cone_angle[] = { INIT_LAMP_CONE_ANGLE[x], INIT_LAMP_CONE_ANGLE[y], INIT_LAMP_CONE_ANGLE[z] };
 
-GLfloat lamp_angle = 90.0f;
-GLfloat MAX_LAMP_ANGLE = 90.0f;
+const GLfloat INIT_LAMP_ARTICULATION_ANGLE = 90.0f;
+GLfloat lamp_articulation_angle = INIT_LAMP_ARTICULATION_ANGLE;
+GLfloat MAX_LAMP_ARTICULATION_ANGLE = 90.0f;
 GLint rotation_direction = 1;
 
 // * Ball values *
@@ -69,7 +72,7 @@ GLfloat ball_position[] = { table_surface[x] * 2 / 3, table_height, table_surfac
 GLfloat ball_radius = 0.05f;
 
 // * Animation values *
-const int ANIMATION_LENGTH = 60;
+const int ANIMATION_LENGTH = 90;
 const GLfloat MAX_LAMP_BOUNCE = 0.1f;
 int animation_time = 0;
 bool lamp_is_jumping = true;
@@ -120,7 +123,7 @@ void Display(void) {
 
 				glLightfv(GL_LIGHT2, GL_POSITION, new GLfloat[]{ 0, 0, 0, 1 });
 
-				setMaterial(new GLfloat[]{ 1,1,0 }, 0, 0, 0, 1, 50);
+				setMaterial(new GLfloat[]{ 1, 1, 0 }, 0, 0, 0, 1, 50);
 				gluSphere(quadratic, 0.02f, 32, 32);
 				resetMaterial();
 			}
@@ -166,6 +169,7 @@ void Display(void) {
 				glTranslatef(lamp_position[x], lamp_position[y], lamp_position[z]);
 
 				glRotated(-90, 1, 0, 0);
+				glRotated(lamp_direction, 0, 0, 1);
 				// Lamp base
 				glPushMatrix(); {
 					//glColor3f(0, 0.5f, 0.5f);
@@ -208,17 +212,16 @@ void Display(void) {
 
 						// Second bone of the lamp
 						glPushMatrix(); {
-							glRotated(lamp_angle, 0, 1, 0);
+							glRotated(lamp_articulation_angle, 0, 1, 0);
 							setMaterial(lamp_arms_color, 1, 1, 0.5f, 0, 0.5f);
 							gluCylinder(quadratic, lamp_arm_radius, lamp_arm_radius, lamp_arm_length, 32, 1);
 
 							// Lamp cone + lightbulb
 							glPushMatrix(); {
 								glTranslatef(0, 0, lamp_arm_length);
-								glRotatef(lamp_cone_angle[x], 1, 0, 0);
 								glRotatef(lamp_cone_angle[y], 0, 1, 0);
-								glRotatef(lamp_cone_angle[z], 0, 0, 1);
-								//glRotated(lamp_angle - 20, 0, 1, 0);
+								glRotatef(lamp_cone_angle[x], 1, 0, 0);
+								//glRotatef(lamp_cone_angle[z], 0, 0, 1);
 								setMaterial(lamp_accents_color, 1, 1, 0.5f, 0, 0.5f);
 								glutSolidSphere(lamp_arm_radius * 3 / 2, 32, 32);
 								gluCylinder(quadratic, lamp_arm_radius, lamp_cone_width, lamp_arm_length / 2, 32, 32);
@@ -235,7 +238,7 @@ void Display(void) {
 								glutSolidSphere(0.02f, 32, 32);
 
 								glLightfv(GL_LIGHT1, GL_POSITION, new GLfloat[]{ 0, 0, 0 });
-								glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, new GLfloat[]{ 0,0,1 });
+								glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, new GLfloat[]{ 0, 0, 1 });
 							}
 							glPopMatrix(); // End of lamp cone
 
@@ -262,7 +265,7 @@ void Display(void) {
 		}
 		glPopMatrix(); // End of scene
 
-		if (SHOW_AXES) {
+		if (show_axes) {
 			draw_axes();
 		}
 	}
@@ -277,29 +280,55 @@ void reset_animation() {
 	lamp_position[y] = INIT_LAMP_POSITION[y];
 	lamp_position[z] = INIT_LAMP_POSITION[z];
 
+	lamp_cone_angle[x] = INIT_LAMP_CONE_ANGLE[x];
+	lamp_cone_angle[y] = INIT_LAMP_CONE_ANGLE[y];
+	lamp_cone_angle[z] = INIT_LAMP_CONE_ANGLE[z];
+
+	lamp_direction = INIT_LAMP_DIRECTION;
+
+	lamp_articulation_angle = INIT_LAMP_ARTICULATION_ANGLE;
+
 	animation_time = 0;
 }
 
 // Funcion que se ejecuta cuando el sistema no esta ocupado. Sin usar.
 void Idle(void) {
-	// Incrementamos el angulo
+	// Animation
 	if (!is_paused) {
-		//lamp_angle += 0.3f * rotation_direction;
-		//// Si es mayor que dos pi la decrementamos
-		//if (lamp_angle > MAX_LAMP_ANGLE) {
-		//	rotation_direction = -1;
-		//} else if (lamp_angle < 0) {
-		//	rotation_direction = 1;
-		//}
-
 		if (animation_time <= 30) {
+			// From 0 -> 30: Lamp starts jumping
 			lamp_position[x] += 0.01f;
-			GLfloat lamp_height = sinf(M_PI * (float)animation_time / (ANIMATION_LENGTH / 4));
+			GLfloat lamp_height = sinf(M_PI * (float)animation_time / 15);
 			lamp_position[y] = table_height + abs(lamp_height * MAX_LAMP_BOUNCE);
-			lamp_angle += 2 * lamp_height;
-			std::cout << lamp_height << "\n";
-		} else if(animation_time <= 40) {
-
+			lamp_articulation_angle += 2 * lamp_height;
+		} else if(animation_time <= 35) {
+			// From 30 -> 35: Lamp looks back
+			lamp_cone_angle[x] += 20;
+		} else if (animation_time <= 45) {
+			// From 35 -> 45
+			// Lamp turns around. Should turn around exactly 180 degrees in 10 seconds. That means 18 degrees per second: d=18 * (t - to)
+			// where to is the starting time of the animation (in this case, 35).
+			lamp_direction = - 18 * (animation_time - 35);
+			lamp_cone_angle[x] -= 10;
+			if (animation_time <= 40) lamp_position[y] += 0.02f;
+			else lamp_position[y] -= 0.02f;
+		} else if(animation_time <= 75) {
+			// From 45 -> 75: Lamp jumps back to starting position
+			lamp_position[x] -= 0.01f;
+			GLfloat lamp_height = sinf(M_PI * (float)(animation_time-45) / 15);
+			lamp_position[y] = table_height + abs(lamp_height * MAX_LAMP_BOUNCE);
+			lamp_articulation_angle += 2 * lamp_height;
+		} else if (animation_time <= 80) {
+			// From 75 -> 80: Lamp looks back again
+			lamp_cone_angle[x] += 20;
+		} else {
+			// From 80 -> 90
+			// Lamp turns around. Should turn around exactly 180 degrees in 10 seconds with a starting value of 180. That means 18 degrees per second: d=180 - 18 * (t - to) 
+			// where to is the starting time of the animation (in this case, 80), but it starts with a value of 180.
+			lamp_direction = 180 - 18 * (animation_time - 80);
+			lamp_cone_angle[x] -= 10;
+			if (animation_time <= 85) lamp_position[y] += 0.02f;
+			else lamp_position[y] -= 0.02f;
 		}
 
 		animation_time++;
@@ -307,6 +336,7 @@ void Idle(void) {
 			reset_animation();
 		}
 	}
+
 	// Indicamos que es necesario repintar la pantalla
 	glutPostRedisplay();
 }
@@ -380,6 +410,9 @@ void setTimeAndSpace(int value) {
 		break;
 	case ANIMATION_RESET:
 		reset_animation();
+		break;
+	case AXES_TOGGLE:
+		show_axes = !show_axes;
 		break;
 	default:
 		eye_x = 1.0f;
@@ -626,8 +659,10 @@ void createMenu() {
 	glutSetMenu(idMenuDefault);
 	glutAddSubMenu("Toggle lights", idMenuLights);
 
-	glutAddMenuEntry("Pause/Play animation", ANIMATION_PAUSE);
+	glutAddMenuEntry("Toggle animation", ANIMATION_PAUSE);
 	glutAddMenuEntry("Restart animation", ANIMATION_RESET);
+
+	glutAddMenuEntry("Toggle axes", AXES_TOGGLE);
 }
 
 // Funcion principal
