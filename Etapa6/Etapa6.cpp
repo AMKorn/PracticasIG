@@ -8,13 +8,16 @@
 const int W_WIDTH = 700;
 const int W_HEIGHT = 700;
 
-// Boolean to state if axes are to be shown. 
+// Toggleable booleans for the full scene. 
 bool show_axes = false;
 bool is_paused = true;
+bool show_fog = false;
 
 // Constant to state the distance a camera jump makes with each input
 const GLfloat CAM_JUMP = 0.05f;
 const GLfloat CAM_MAX_HEIGHT = 20.0f;
+
+const GLfloat background_color[] = { 1, 1, 1, 1 };
 
 // **** Variables ****
 GLfloat rotate_x, rotate_y; // Variables to manage the object rotation
@@ -101,10 +104,17 @@ void Display(void) {
 		glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_value);
 		glLighti(GL_LIGHT1, GL_SPOT_CUTOFF, 45);
 		glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 10);
-		//glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1);
-		//glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0);
-		//glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0);
 	} else glDisable(GL_LIGHT1);
+
+	if (show_fog) {
+		glEnable(GL_FOG);
+
+		glFogfv(GL_FOG_COLOR, background_color);
+		glFogi(GL_FOG_MODE, GL_LINEAR);
+
+		glFogf(GL_FOG_START, 1);
+		glFogf(GL_FOG_END, 1.5f);
+	} else glDisable(GL_FOG);
 
 	glPushMatrix(); {
 		gluLookAt(eye_x, eye_y, eye_z,
@@ -414,6 +424,9 @@ void setTimeAndSpace(int value) {
 	case AXES_TOGGLE:
 		show_axes = !show_axes;
 		break;
+	case FOG_TOGGLE:
+		show_fog = !show_fog;
+		break;
 	default:
 		eye_x = 1.0f;
 		eye_y = 1.0f;
@@ -632,6 +645,9 @@ void keyboardKeys(unsigned char key, int x, int y) {
 	case 'p':
 		setTimeAndSpace(ANIMATION_PAUSE);
 		break;
+	case 'f':
+		setTimeAndSpace(FOG_TOGGLE);
+		break;
 	}
 	glutPostRedisplay();
 }
@@ -659,6 +675,8 @@ void createMenu() {
 	glutSetMenu(idMenuDefault);
 	glutAddSubMenu("Toggle lights", idMenuLights);
 
+	glutAddMenuEntry("Toggle fog", FOG_TOGGLE);
+
 	glutAddMenuEntry("Toggle animation", ANIMATION_PAUSE);
 	glutAddMenuEntry("Restart animation", ANIMATION_RESET);
 
@@ -682,6 +700,7 @@ int main(int argc, char** argv) {
 		<< "Use the following controls to move the camera : \n"
 		<< " F1 : Camera panning[default]\n F2 : Move camera\n F3 : Nadir\n"
 		<< " F4 : low angle view\n F5 : Normal\n F6 : high angle view[default]\n F7 : Zenith\n";
+	std::cout << "Use F to enable or disable fog.\n";
 	std::cout << "Use 2 to enable/disable the free light, WASD to move it horizontally. Q and E to move it vertically.\n";
 	std::cout << "Press P to pause or play the animation.\n";
 
@@ -697,7 +716,7 @@ int main(int argc, char** argv) {
 	gluQuadricOrientation(inv_quadratic, GLU_INSIDE);
 
 	// El color de fondo sera el blanco (RGBA, RGB + Alpha channel)
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(background_color[RED], background_color[GREEN], background_color[BLUE], background_color[ALPHA]);
 	gluPerspective(60, (GLfloat)W_WIDTH / (GLfloat)W_HEIGHT, 0.001f, 100.0f);
 
 	glViewport(0.0f, 0.0f, W_WIDTH, W_HEIGHT);

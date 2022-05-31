@@ -30,6 +30,7 @@ const int ANIMATION_PAUSE = 7;
 const int ANIMATION_RESET = 8;
 
 const int AXES_TOGGLE = 9;
+const int FOG_TOGGLE = 10;
 
 // Constants for the different lights
 const int LIGHT_AMBIENT = 0;
