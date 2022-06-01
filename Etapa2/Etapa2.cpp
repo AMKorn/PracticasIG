@@ -9,14 +9,14 @@ const int W_HEIGHT = 700;
 // Boolean to state if axes are to be shown. 
 const int SHOW_AXES = true;
 
-GLfloat fAngulo_base; // Variable que indica el angulo de rotación del primer "hueso".
+GLfloat fAnguloBase; // Variable que indica el angulo de rotación del primer "hueso".
 GLfloat fAngulo2; // Variable que indica el ángulo de rotación del segundo "hueso".
 
-int direction_base = -1;
+int directionBase = -1;
 int direction2 = -1;
 
 // Funcion que visualiza la escena OpenGL
-void Display(void) {
+void display(void) {
 	// Borramos la escena
 	glClear(GL_COLOR_BUFFER_BIT);
 	
@@ -32,7 +32,7 @@ void Display(void) {
 	glPushMatrix();
 		// Las siguientes primitivas se rotan: es el primer hueso del brazo 
 		// y todas las que estén ancladas a ella
-		glRotatef(fAngulo_base, 0.0f, 0.0f, 1.0f);
+		glRotatef(fAnguloBase, 0.0f, 0.0f, 1.0f);
 
 		glBegin(GL_POLYGON);
 		glColor3f(0.7f, 0.7f, 0.7f);
@@ -42,7 +42,7 @@ void Display(void) {
 		glVertex3f(-0.05f, 0.45f, 0.0f);
 		glEnd();
 
-		draw_ellipse(0.0f, 0.0f, 0.05f, 0.05f, 360);
+		drawEllipse(0.0f, 0.0f, 0.05f, 0.05f, 360);
 
 		glPushMatrix();
 			// Lo siguiente se vuelve a rotar: es el segundo "hueso" del brazo.
@@ -57,20 +57,20 @@ void Display(void) {
 			glVertex3f(0.4f, 0.05f, 0.0f);
 			glEnd();
 
-			draw_ellipse(0.0f, 0.0f, 0.05f, 0.05f, 360);
+			drawEllipse(0.0f, 0.0f, 0.05f, 0.05f, 360);
 
 			glColor3f(0.0f, 0.0f, 0.0f);
-			draw_ellipse(0.0f, 0.0f, 0.025f, 0.025f, 360);
+			drawEllipse(0.0f, 0.0f, 0.025f, 0.025f, 360);
 
 		glPopMatrix();
 
 		glColor3f(0.0f, 0.0f, 0.0f);
-		draw_ellipse(0.0f, 0.0f, 0.025f, 0.025f, 360);
+		drawEllipse(0.0f, 0.0f, 0.025f, 0.025f, 360);
 
 	glPopMatrix();
 
 	if (SHOW_AXES) {
-		draw_axes();
+		drawAxes();
 	}
 
 	glFlush();
@@ -78,14 +78,14 @@ void Display(void) {
 }
 
 // Funcion que se ejecuta cuando el sistema no esta ocupado
-void Idle(void) {
+void idle(void) {
 	// Incrementamos el angulo
-	fAngulo_base += 0.01f*direction_base;
+	fAnguloBase += 0.01f*directionBase;
 	// Queremos que el brazo vaya girando solo 10 grados a cada lado de su origen
-	if (fAngulo_base > 10.0f) {
-		direction_base = -1;
-	} else if (fAngulo_base < -10.0f) {
-		direction_base = 1;
+	if (fAnguloBase > 10.0f) {
+		directionBase = -1;
+	} else if (fAnguloBase < -10.0f) {
+		directionBase = 1;
 	}
 	// Incrementamos el angulo 2, este hueso gira 20 grados en cada direccion
 	fAngulo2 += 0.03f * direction2;
@@ -129,8 +129,8 @@ int main(int argc, char** argv) {
 
 	// Indicamos cuales son las funciones de redibujado e idle
 	glutReshapeFunc(reshape);
-	glutDisplayFunc(Display);
-	glutIdleFunc(Idle);
+	glutDisplayFunc(display);
+	glutIdleFunc(idle);
 
 	// El color de fondo sera el negro (RGBA, RGB + Alpha channel)
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);

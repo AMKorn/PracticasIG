@@ -16,34 +16,34 @@ const GLfloat CAM_JUMP = 0.05f;
 const GLfloat CAM_MAX_HEIGHT = 20.0f;
 
 // **** Variables ****
-GLfloat rotate_x, rotate_y; // Variables to manage the object rotation
-GLfloat eye_x = 1.0f, eye_y = 1.0f, eye_z = 1.0f; // Variables to manage the camera
-GLfloat center_x = 0.0f, center_y = 0.0f, center_z = 0.0f;
-GLfloat up_x = 0.0f, up_y = 1.0f, up_z = 0.0f;
+GLfloat rotateX, rotateY; // Variables to manage the object rotation
+GLfloat eyeX = 1.0f, eyeY = 1.0f, eyeZ = 1.0f; // Variables to manage the camera
+GLfloat centerX = 0.0f, centerY = 0.0f, centerZ = 0.0f;
+GLfloat upX = 0.0f, upY = 1.0f, upZ = 0.0f;
 
-int camera_mode = CAM_PAN; // Variable to state which camera mode is enabled. Panning (F1) is default state.
+int cameraMode = CAM_PAN; // Variable to state which camera mode is enabled. Panning (F1) is default state.
 
 // Scene values
-GLfloat table_height = 0.5f;
+GLfloat tableHeight = 0.5f;
 
-GLfloat table_surface[] = { 0.75f, 0.05f, 0.5f };
-GLfloat table_leg[] = { 0.05f, table_height - table_surface[y], 0.05f};
+GLfloat tableSurface[] = { 0.75f, 0.05f, 0.5f };
+GLfloat tableLeg[] = { 0.05f, tableHeight - tableSurface[y], 0.05f};
 
-GLfloat lamp_position[] = {table_surface[x] / 3, table_height, table_surface[z] / 2};
+GLfloat lampPosition[] = {tableSurface[x] / 3, tableHeight, tableSurface[z] / 2};
 
-GLfloat lamp_base_radius = 0.05f, lamp_base_height = 0.025f;
-GLfloat lamp_arm_radius = lamp_base_radius / 5, lamp_arm_length = 0.1f;
+GLfloat lampBaseRadius = 0.05f, lampBaseHeight = 0.025f;
+GLfloat lampArmRadius = lampBaseRadius / 5, lampArmLength = 0.1f;
 
 // Funcion que visualiza la escena OpenGL
-void Display(void) {
+void display(void) {
 	// Establecemos la escena con profundidad
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glPushMatrix(); {
-		gluLookAt(eye_x, eye_y, eye_z,
-			center_x, center_y, center_z,
-			up_x, up_y, up_z);
+		gluLookAt(eyeX, eyeY, eyeZ,
+			centerX, centerY, centerZ,
+			upX, upY, upZ);
 
 		// Start of scene 
 		glPushMatrix(); {
@@ -52,21 +52,21 @@ void Display(void) {
 			glRotatef(rotate_y, 0.0f, 1.0f, 0.0f);*/
 
 			// We draw the table legs
-			draw_parall(table_leg[x], table_leg[y], table_leg[z]);
+			drawParall(tableLeg[x], tableLeg[y], tableLeg[z]);
 
 			glPushMatrix(); {
-				glTranslatef(0, 0, table_surface[z] - table_leg[z]);
-				draw_parall(table_leg[x], table_leg[y], table_leg[z]);
+				glTranslatef(0, 0, tableSurface[z] - tableLeg[z]);
+				drawParall(tableLeg[x], tableLeg[y], tableLeg[z]);
 			}
 			glPopMatrix();
 
 			glPushMatrix(); {
-				glTranslatef(table_surface[x] - table_leg[x], 0, 0);
-				draw_parall(table_leg[x], table_leg[y], table_leg[z]);
+				glTranslatef(tableSurface[x] - tableLeg[x], 0, 0);
+				drawParall(tableLeg[x], tableLeg[y], tableLeg[z]);
 
 				glPushMatrix(); {
-					glTranslatef(0, 0, table_surface[z] - table_leg[z]);
-					draw_parall(table_leg[x], table_leg[y], table_leg[z]);
+					glTranslatef(0, 0, tableSurface[z] - tableLeg[z]);
+					drawParall(tableLeg[x], tableLeg[y], tableLeg[z]);
 				}
 				glPopMatrix();
 			}
@@ -75,26 +75,26 @@ void Display(void) {
 
 			// Start of table surface
 			glPushMatrix(); {
-				glTranslatef(0, table_height - table_surface[y], 0);
-				draw_parall(table_surface[x], table_surface[y], table_surface[z]);
+				glTranslatef(0, tableHeight - tableSurface[y], 0);
+				drawParall(tableSurface[x], tableSurface[y], tableSurface[z]);
 			}
 			glPopMatrix(); // End of table surface
 
 			// Start of lamp 
 			glPushMatrix(); {
-				glTranslatef(lamp_position[x], lamp_position[y], lamp_position[z]);
+				glTranslatef(lampPosition[x], lampPosition[y], lampPosition[z]);
 
 				glRotated(-90, 1, 0, 0);
 				// Lamp base
 				glPushMatrix(); {
 					glColor3f(0, 0.5f, 0.5f);
-					gluCylinder(quadratic, lamp_base_radius, lamp_base_radius, lamp_base_height, 32, 32);
+					gluCylinder(quadratic, lampBaseRadius, lampBaseRadius, lampBaseHeight, 32, 32);
 
 					// Start of the top of the lamp base
 					glPushMatrix(); {
 						glColor3f(0.5f, 0, 0.5f);
-						glTranslatef(0, 0, lamp_base_height);
-						draw_ellipse(0, 0, lamp_base_radius, lamp_base_radius, 360);
+						glTranslatef(0, 0, lampBaseHeight);
+						drawEllipse(0, 0, lampBaseRadius, lampBaseRadius, 360);
 					}
 					glPopMatrix(); // End of top of lamp base
 				}
@@ -104,7 +104,7 @@ void Display(void) {
 				glPushMatrix(); {
 					glRotated(-30, 0, 1, 0);
 					glColor3f(0,1,0);
-					gluCylinder(quadratic, lamp_arm_radius, lamp_arm_radius, lamp_arm_length, 32, 32);
+					gluCylinder(quadratic, lampArmRadius, lampArmRadius, lampArmLength, 32, 32);
 				}
 				glPopMatrix(); // End of first bone
 
@@ -115,7 +115,7 @@ void Display(void) {
 		glPopMatrix(); // End of scene
 
 		if (SHOW_AXES) {
-			draw_axes();
+			drawAxes();
 		}
 	}
 	glPopMatrix();
@@ -125,12 +125,12 @@ void Display(void) {
 }
 
 // Funcion que se ejecuta cuando el sistema no esta ocupado. Sin usar.
-void Idle(void) {
+void idle(void) {
 	// Incrementamos el angulo
-	rotate_x += 0.03f;
+	rotateX += 0.03f;
 	// Si es mayor que dos pi la decrementamos
-	if (rotate_x > 360)
-		rotate_x -= 360;
+	if (rotateX > 360)
+		rotateX -= 360;
 	// Indicamos que es necesario repintar la pantalla
 	glutPostRedisplay();
 }
@@ -157,104 +157,104 @@ void reshape(int width, int height) {
 
 // Función para escuchar las teclas
 void specialKeys(int key, int x, int y) {
-	GLfloat module;
-	GLfloat unit_x, unit_y, unit_z;
+	GLfloat modulus;
+	GLfloat unitaryX, unitaryY, unitaryZ;
 
 	switch (key) {
 	case GLUT_KEY_F1:
-		camera_mode = CAM_PAN;
+		cameraMode = CAM_PAN;
 		std::cout << "Camera control mode: panning\n";
 		break;
 	case GLUT_KEY_F2:
-		camera_mode = CAM_MOVE;
+		cameraMode = CAM_MOVE;
 		std::cout << "Camera control mode: moving\n";
 		break;
 	case GLUT_KEY_F3:
 		std::cout << "Set: Nadir plane\n [Camera move not supported]\n";
-		eye_x = 0.5f;
-		eye_y = -1.0f;
-		eye_z = 0.5f;
-		center_x = 0.5f;
-		center_y = 0.0f;
-		center_z = 0.5f;
-		up_x = 0.0f;
-		up_y = 0.0f;
-		up_z = 1.0f;
+		eyeX = 0.5f;
+		eyeY = -1.0f;
+		eyeZ = 0.5f;
+		centerX = 0.5f;
+		centerY = 0.0f;
+		centerZ = 0.5f;
+		upX = 0.0f;
+		upY = 0.0f;
+		upZ = 1.0f;
 		break;
 	case GLUT_KEY_F4:
 		std::cout << "Set: Low angle view\n";
-		eye_x = 1.0f;
-		eye_y = 0.0f;
-		eye_z = 1.0f;
-		center_x = 0.5f;
-		center_y = 0.5f;
-		center_z = 0.5f;
-		up_x = 0.0f;
-		up_y = 1.0f;
-		up_z = 0.0f;
+		eyeX = 1.0f;
+		eyeY = 0.0f;
+		eyeZ = 1.0f;
+		centerX = 0.5f;
+		centerY = 0.5f;
+		centerZ = 0.5f;
+		upX = 0.0f;
+		upY = 1.0f;
+		upZ = 0.0f;
 		break;
 	case GLUT_KEY_F5:
 		std::cout << "Set: Normal view\n";
-		eye_x = 1.0f;
-		eye_y = 0.5f;
-		eye_z = 1.0f;
-		center_x = 0.5f;
-		center_y = 0.5f;
-		center_z = 0.5f;
-		up_x = 0.0f;
-		up_y = 1.0f;
-		up_z = 0.0f;
+		eyeX = 1.0f;
+		eyeY = 0.5f;
+		eyeZ = 1.0f;
+		centerX = 0.5f;
+		centerY = 0.5f;
+		centerZ = 0.5f;
+		upX = 0.0f;
+		upY = 1.0f;
+		upZ = 0.0f;
 		break;
 	case GLUT_KEY_F6:
 		std::cout << "Set: High angle view\n";
-		eye_x = 1.0f;
-		eye_y = 1.0f;
-		eye_z = 1.0f;
-		center_x = 0.0f;
-		center_y = 0.0f;
-		center_z = 0.0f;
-		up_x = 0.0f;
-		up_y = 1.0f;
-		up_z = 0.0f;
+		eyeX = 1.0f;
+		eyeY = 1.0f;
+		eyeZ = 1.0f;
+		centerX = 0.0f;
+		centerY = 0.0f;
+		centerZ = 0.0f;
+		upX = 0.0f;
+		upY = 1.0f;
+		upZ = 0.0f;
 		break;
 	case GLUT_KEY_F7:
 		std::cout << "Set: Zenith view\n [Camera move not supported]\n";
-		eye_x = 0.5f;
-		eye_y = 1.0f;
-		eye_z = 0.5f;
-		center_x = 0.5f;
-		center_y = 0.0f;
-		center_z = 0.5f;
-		up_x = 0.0f;
-		up_y = 0.0f;
-		up_z = 1.0f;
+		eyeX = 0.5f;
+		eyeY = 1.0f;
+		eyeZ = 0.5f;
+		centerX = 0.5f;
+		centerY = 0.0f;
+		centerZ = 0.5f;
+		upX = 0.0f;
+		upY = 0.0f;
+		upZ = 1.0f;
 		break;
 	case GLUT_KEY_RIGHT:
-		if (camera_mode == CAM_PAN) {
+		if (cameraMode == CAM_PAN) {
 			// Camera should rotate around itself clockwise
 			// We will use the same idea as a rotation transformation to move the camera center around 
 			// the axis parallel to the y-axis and that passes through the camera eye
-			center_x -= eye_x;
-			center_z -= eye_z; // We move it to where it would be if eye was in (0,y,0)
+			centerX -= eyeX;
+			centerZ -= eyeZ; // We move it to where it would be if eye was in (0,y,0)
 
-			center_x = center_x * cosf(CAM_JUMP) + center_z * sinf(CAM_JUMP);
-			center_z = center_z * cosf(CAM_JUMP) - center_x * sinf(CAM_JUMP);
+			centerX = centerX * cosf(CAM_JUMP) + centerZ * sinf(CAM_JUMP);
+			centerZ = centerZ * cosf(CAM_JUMP) - centerX * sinf(CAM_JUMP);
 
-			center_x += eye_x;
-			center_z += eye_z;
-		} else if (camera_mode == CAM_MOVE) {
+			centerX += eyeX;
+			centerZ += eyeZ;
+		} else if (cameraMode == CAM_MOVE) {
 			// Camera should move to its right
 			
 			// We need to get the unit vector of the vector eye -> center
 			// u = v / module(v);
-			unit_x = center_x - eye_x;
-			unit_y = center_y - eye_y;
-			unit_z = center_z - eye_z;
+			unitaryX = centerX - eyeX;
+			unitaryY = centerY - eyeY;
+			unitaryZ = centerZ - eyeZ;
 
-			module = sqrt(unit_x * unit_x + unit_y * unit_y + unit_z * unit_z);
-			unit_x /= module;
-			unit_y /= module;
-			unit_z /= module;
+			modulus = sqrt(unitaryX * unitaryX + unitaryY * unitaryY + unitaryZ * unitaryZ);
+			unitaryX /= modulus;
+			unitaryY /= modulus;
+			unitaryZ /= modulus;
 
 			// The right vector is calculated with vectorial product of unit x up;
 			// right_x = -unit_z;
@@ -262,35 +262,35 @@ void specialKeys(int key, int x, int y) {
 			// right_z = unit_x;
 			// After that, the new center and eye position equal:
 			// center += right; eye += right;
-			center_x -= unit_z * CAM_JUMP;
-			eye_x -= unit_z * CAM_JUMP;
-			center_z += unit_x * CAM_JUMP;
-			eye_z += unit_x * CAM_JUMP;
+			centerX -= unitaryZ * CAM_JUMP;
+			eyeX -= unitaryZ * CAM_JUMP;
+			centerZ += unitaryX * CAM_JUMP;
+			eyeZ += unitaryX * CAM_JUMP;
 		}
 		break;
 	case GLUT_KEY_LEFT:
-		if (camera_mode == CAM_PAN) {
-			center_x -= eye_x;
-			center_z -= eye_z; // We move it to where it would be if eye was in (0,y,0)
+		if (cameraMode == CAM_PAN) {
+			centerX -= eyeX;
+			centerZ -= eyeZ; // We move it to where it would be if eye was in (0,y,0)
 
-			center_x = center_x * cosf(-CAM_JUMP) + center_z * sinf(-CAM_JUMP);
-			center_z = center_z * cosf(-CAM_JUMP) - center_x * sinf(-CAM_JUMP);
+			centerX = centerX * cosf(-CAM_JUMP) + centerZ * sinf(-CAM_JUMP);
+			centerZ = centerZ * cosf(-CAM_JUMP) - centerX * sinf(-CAM_JUMP);
 
-			center_x += eye_x;
-			center_z += eye_z;
-		} else if (camera_mode == CAM_MOVE) {
+			centerX += eyeX;
+			centerZ += eyeZ;
+		} else if (cameraMode == CAM_MOVE) {
 			// Camera should move to its left
 
 			// We need to get the unit vector of the vector eye -> center
 			// u = v / module(v);
-			unit_x = center_x - eye_x;
-			unit_y = center_y - eye_y;
-			unit_z = center_z - eye_z;
+			unitaryX = centerX - eyeX;
+			unitaryY = centerY - eyeY;
+			unitaryZ = centerZ - eyeZ;
 
-			module = sqrt(unit_x * unit_x + unit_y * unit_y + unit_z * unit_z);
-			unit_x /= module;
-			unit_y /= module;
-			unit_z /= module;
+			modulus = sqrt(unitaryX * unitaryX + unitaryY * unitaryY + unitaryZ * unitaryZ);
+			unitaryX /= modulus;
+			unitaryY /= modulus;
+			unitaryZ /= modulus;
 
 			// The right vector is calculated with vectorial product of unit x up;
 			// right_x = -unit_z;
@@ -298,61 +298,61 @@ void specialKeys(int key, int x, int y) {
 			// right_z = unit_x;
 			// After that, the new center and eye position equal:
 			// center -= right; eye -= right;
-			center_x += unit_z * CAM_JUMP;
-			eye_x += unit_z * CAM_JUMP;
-			center_z -= unit_x * CAM_JUMP;
-			eye_z -= unit_x * CAM_JUMP;
+			centerX += unitaryZ * CAM_JUMP;
+			eyeX += unitaryZ * CAM_JUMP;
+			centerZ -= unitaryX * CAM_JUMP;
+			eyeZ -= unitaryX * CAM_JUMP;
 		}
 		break;
 	case GLUT_KEY_UP:
-		if (camera_mode == CAM_PAN && center_y < CAM_MAX_HEIGHT) {
-			center_y += CAM_JUMP;
-		} else if (camera_mode == CAM_MOVE) {
+		if (cameraMode == CAM_PAN && centerY < CAM_MAX_HEIGHT) {
+			centerY += CAM_JUMP;
+		} else if (cameraMode == CAM_MOVE) {
 			// UP KEY -> move forward
 			
 			// We need to get the unit vector of the vector eye -> center
 			// u = v / module(v);
-			unit_x = center_x - eye_x;
-			unit_y = center_y - eye_y;
-			unit_z = center_z - eye_z;
+			unitaryX = centerX - eyeX;
+			unitaryY = centerY - eyeY;
+			unitaryZ = centerZ - eyeZ;
 
-			module = sqrt(unit_x * unit_x + unit_y * unit_y + unit_z * unit_z);
-			unit_x /= module;
-			unit_y /= module;
-			unit_z /= module;
+			modulus = sqrt(unitaryX * unitaryX + unitaryY * unitaryY + unitaryZ * unitaryZ);
+			unitaryX /= modulus;
+			unitaryY /= modulus;
+			unitaryZ /= modulus;
 
-			center_x += unit_x * CAM_JUMP;
-			center_y += unit_y * CAM_JUMP;
-			center_z += unit_z * CAM_JUMP;
-			eye_x += unit_x * CAM_JUMP;
-			eye_y += unit_y * CAM_JUMP;
-			eye_z += unit_z * CAM_JUMP;
+			centerX += unitaryX * CAM_JUMP;
+			centerY += unitaryY * CAM_JUMP;
+			centerZ += unitaryZ * CAM_JUMP;
+			eyeX += unitaryX * CAM_JUMP;
+			eyeY += unitaryY * CAM_JUMP;
+			eyeZ += unitaryZ * CAM_JUMP;
 
 		}
 		break;
 	case GLUT_KEY_DOWN:
-		if (camera_mode == CAM_PAN && center_y > -CAM_MAX_HEIGHT) {
-			center_y -= CAM_JUMP;
-		} else if (camera_mode == CAM_MOVE) {
+		if (cameraMode == CAM_PAN && centerY > -CAM_MAX_HEIGHT) {
+			centerY -= CAM_JUMP;
+		} else if (cameraMode == CAM_MOVE) {
 			// DOWN KEY -> move backwards
 
 			// We need to get the unit vector of the vector eye -> center
 			// u = v / module(v);
-			unit_x = center_x - eye_x;
-			unit_y = center_y - eye_y;
-			unit_z = center_z - eye_z;
+			unitaryX = centerX - eyeX;
+			unitaryY = centerY - eyeY;
+			unitaryZ = centerZ - eyeZ;
 
-			module = sqrt(unit_x * unit_x + unit_y * unit_y + unit_z * unit_z);
-			unit_x /= module;
-			unit_y /= module;
-			unit_z /= module;
+			modulus = sqrt(unitaryX * unitaryX + unitaryY * unitaryY + unitaryZ * unitaryZ);
+			unitaryX /= modulus;
+			unitaryY /= modulus;
+			unitaryZ /= modulus;
 
-			center_x -= unit_x * CAM_JUMP;
-			center_y -= unit_y * CAM_JUMP;
-			center_z -= unit_z * CAM_JUMP;
-			eye_x -= unit_x * CAM_JUMP;
-			eye_y -= unit_y * CAM_JUMP;
-			eye_z -= unit_z * CAM_JUMP;
+			centerX -= unitaryX * CAM_JUMP;
+			centerY -= unitaryY * CAM_JUMP;
+			centerZ -= unitaryZ * CAM_JUMP;
+			eyeX -= unitaryX * CAM_JUMP;
+			eyeY -= unitaryY * CAM_JUMP;
+			eyeZ -= unitaryZ * CAM_JUMP;
 
 		}
 		break;
@@ -385,7 +385,7 @@ int main(int argc, char** argv) {
 
 	// Indicamos cuales son las funciones de redibujado e idle
 	glutReshapeFunc(reshape);
-	glutDisplayFunc(Display);
+	glutDisplayFunc(display);
 	glutSpecialFunc(specialKeys);
 	//glutKeyboardFunc(keyboardKeys);
 	//glutIdleFunc(Idle);

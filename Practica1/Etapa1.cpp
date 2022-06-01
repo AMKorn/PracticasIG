@@ -12,7 +12,7 @@ const int SHOW_AXES = true;
 GLfloat fAngulo; // Variable que indica el angulo de rotaci�n de los ejes. 
 
 // Funcion que visualiza la escena OpenGL
-void Display(void) {
+void display(void) {
 	// Borramos la escena
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -59,7 +59,7 @@ void Display(void) {
 	glPopMatrix();
 	
 	if (SHOW_AXES) {
-		draw_axes();
+		drawAxes();
 	}
 
 	glFlush();
@@ -67,7 +67,7 @@ void Display(void) {
 }
 
 // Funcion que se ejecuta cuando el sistema no esta ocupado
-void Idle(void) {
+void idle(void) {
 	// Incrementamos el angulo
 	fAngulo += 0.3f;
 	// Si es mayor que dos pi la decrementamos
@@ -111,8 +111,8 @@ int main(int argc, char** argv) {
 
 	// Indicamos cuales son las funciones de redibujado e idle
 	glutReshapeFunc(reshape);
-	glutDisplayFunc(Display);
-	glutIdleFunc(Idle);
+	glutDisplayFunc(display);
+	glutIdleFunc(idle);
 
 	// El color de fondo sera el negro (RGBA, RGB + Alpha channel)
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);

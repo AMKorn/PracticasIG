@@ -9,10 +9,10 @@ const int W_HEIGHT = 700;
 // Boolean to state if axes are to be shown. 
 const int SHOW_AXES = true;
 
-GLfloat rotate_x, rotate_y;
+GLfloat rotateX, rotateY;
 
 // Funcion que visualiza la escena OpenGL
-void Display(void) {
+void display(void) {
 	// Establecemos la escena con profundidad
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -20,14 +20,14 @@ void Display(void) {
 	// We draw a cube 
 	glPushMatrix(); {
 		//glTranslatef(0.25f, 0.25f, 0.25f);
-		glRotatef(rotate_x, 1.0f, 0.0f, 0.0f);
-		glRotatef(rotate_y, 0.0f, 1.0f, 0.0f);
-		draw_parall(0.5f, 0.15f, 0.5f);
+		glRotatef(rotateX, 1.0f, 0.0f, 0.0f);
+		glRotatef(rotateY, 0.0f, 1.0f, 0.0f);
+		drawParall(0.5f, 0.15f, 0.5f);
 	}
 	glPopMatrix();
 
 	if (SHOW_AXES) {
-		draw_axes();
+		drawAxes();
 	}
 
 	glFlush();
@@ -35,12 +35,12 @@ void Display(void) {
 }
 
 // Funcion que se ejecuta cuando el sistema no esta ocupado. Sin usar.
-void Idle(void) {
+void idle(void) {
 	// Incrementamos el angulo
-	rotate_x += 0.03f;
+	rotateX += 0.03f;
 	// Si es mayor que dos pi la decrementamos
-	if (rotate_x > 360)
-		rotate_x -= 360;
+	if (rotateX > 360)
+		rotateX -= 360;
 	// Indicamos que es necesario repintar la pantalla
 	glutPostRedisplay();
 }
@@ -65,16 +65,16 @@ void reshape(int width, int height) {
 void specialKeys(int key, int x, int y) {
 	switch (key){
 	case GLUT_KEY_RIGHT:
-		rotate_y -= 5;
+		rotateY -= 5;
 		break;
 	case GLUT_KEY_LEFT:
-		rotate_y += 5;
+		rotateY += 5;
 		break;
 	case GLUT_KEY_UP:
-		rotate_x += 5;
+		rotateX += 5;
 		break;
 	case GLUT_KEY_DOWN:
-		rotate_x -= 5;
+		rotateX -= 5;
 		break;
 	}
 
@@ -96,7 +96,7 @@ int main(int argc, char** argv) {
 
 	// Indicamos cuales son las funciones de redibujado e idle
 	glutReshapeFunc(reshape);
-	glutDisplayFunc(Display);
+	glutDisplayFunc(display);
 	glutSpecialFunc(specialKeys);
 	//glutIdleFunc(Idle);
 

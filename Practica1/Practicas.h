@@ -57,7 +57,7 @@ const GLfloat EMISSION_DEF = 0;
 const GLfloat SHININESS_DEF = 0;
 
 GLUquadricObj* quadratic = gluNewQuadric(); // quadratic for the different glu primitives that require it
-GLUquadricObj* inv_quadratic = gluNewQuadric(); // inverted quadratic, for use when something's inside is being drawn
+GLUquadricObj* invQuadratic = gluNewQuadric(); // inverted quadratic, for use when something's inside is being drawn
 
 void setMaterial(GLfloat color[3], GLfloat ambient_level, GLfloat diffuse_level, GLfloat specular_level, GLfloat emission_level, GLfloat shininess) {
 	GLfloat red = color[RED];
@@ -79,7 +79,7 @@ void resetMaterial() {
 	setMaterial(new GLfloat[]{ 0,0,0 }, AMBIENT_DEF, DIFFUSE_DEF, SPECULAR_DEF, EMISSION_DEF, SHININESS_DEF);
 }
 
-void draw_axes() {
+void drawAxes() {
 	resetMaterial();
 
 	// x-axis
@@ -116,7 +116,7 @@ void draw_axes() {
 }
 
 // Draws a parallelepiped with the given dimensions with a vertex in 0,0,0 with the current color and material.
-void draw_parall_material(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_length_z) {
+void drawParallMaterial(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_length_z) {
 	// Cara en el plano xy
 	glBegin(GL_POLYGON);
 	glNormal3f(0, 0, -1.0f);
@@ -174,7 +174,7 @@ void draw_parall_material(GLfloat face_length_x, GLfloat face_length_y, GLfloat 
 
 // Draws a parallelepiped with the given dimensions with a vertex in 0,0,0 with the current color and material. 
 // Each face is comprised of smaller squares equal to the parameter slices. This is to improve lighting.
-void draw_parall_material(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_length_z, GLint face_polygons) {
+void drawParallMaterial(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_length_z, GLint face_polygons) {
 	// Cara en el plano xy
 	glBegin(GL_TRIANGLE_STRIP);
 	glNormal3f(0, 0, -1);
@@ -273,7 +273,7 @@ void draw_parall_material(GLfloat face_length_x, GLfloat face_length_y, GLfloat 
 }
 
 // Draws a parallelepiped with the given dimensions with a vertex in 0,0,0 and colors the faces red, green and blue.
-void draw_parall(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_length_z) {
+void drawParall(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_length_z) {
 	// Cara en el plano xy
 	glBegin(GL_POLYGON);
 	glNormal3f(0, 0, -1.0f);
@@ -336,7 +336,7 @@ void draw_parall(GLfloat face_length_x, GLfloat face_length_y, GLfloat face_leng
 }
 
 // Draws a rectangle on the plane xy, given the dimensions.
-void draw_rectangle(GLfloat dim_x, GLfloat dim_y) {
+void drawRectangle(GLfloat dim_x, GLfloat dim_y) {
 	glBegin(GL_POLYGON);
 	glVertex3f(0, 0, 0);
 	glVertex3f(dim_x, 0, 0);
@@ -348,7 +348,7 @@ void draw_rectangle(GLfloat dim_x, GLfloat dim_y) {
 /**
 * Function to create part of a circumference, up to the specified angle in degrees
 */
-void draw_ellipse(float center_x, float center_y, float radius_x, float radius_y, int drawn_angle) {
+void drawEllipse(float center_x, float center_y, float radius_x, float radius_y, int drawn_angle) {
 	glBegin(GL_TRIANGLE_FAN);
 	glVertex2f(center_x, center_y);
 	for (int i = 0; i <= drawn_angle; i++) {
