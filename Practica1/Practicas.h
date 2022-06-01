@@ -361,7 +361,7 @@ void draw_ellipse(float center_x, float center_y, float radius_x, float radius_y
 }
 
 void smoothTransition(GLfloat *value, GLfloat destination, GLfloat speed) {
-	if (abs(*value - destination) > 0.01f) {
+	if (abs(*value - destination) > 0.001f) {
 		*value -= (*value - destination) * speed;
 	}
 }

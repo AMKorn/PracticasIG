@@ -8,11 +8,7 @@
 const int W_WIDTH = 700;
 const int W_HEIGHT = 700;
 
-// Toggleable booleans for the full scene. 
-bool show_axes = false;
-bool is_paused = true;
-bool show_fog = false;
-bool smooth_cam = true;
+bool PRINT_CONSOLE = false;
 
 // Constant to state the distance a camera jump makes with each input
 const GLfloat CAM_JUMP = 0.05f;
@@ -21,12 +17,19 @@ const GLfloat CAM_MAX_HEIGHT = 20.0f;
 const GLfloat background_color[] = { 1, 1, 1, 1 };
 
 // **** Variables ****
-//GLfloat rotate_x, rotate_y; // Variables to manage the object rotation
-GLfloat eye_x = 1.0f, eye_y = 1.0f, eye_z = 1.0f; // Variables to manage the camera
+// Toggleable booleans for the full scene. 
+bool show_axes = false;
+bool is_paused = true;
+bool show_fog = false;
+bool smooth_cam = true;
+
+// Variables for perspective
+GLfloat eye_x = 1.0f, eye_y = 1.0f, eye_z = 1.0f;
 GLfloat center_x = 0.0f, center_y = 0.0f, center_z = 0.0f;
 GLfloat up_x = 0.0f, up_y = 1.0f, up_z = 0.0f;
 
-GLfloat real_eye[] = { eye_x, eye_y, eye_z };
+// Variables for perspective when using smooth_camera
+GLfloat real_eye[] = { eye_x, eye_y, eye_z }; 
 GLfloat real_center[] = { center_x, center_y, center_z };
 GLfloat real_up[] = {up_x, up_y, up_z};
 
@@ -478,42 +481,42 @@ void specialKeys(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_F1:
 		camera_mode = CAM_PAN;
-		std::cout << "Camera control mode: panning\n";
+		if(PRINT_CONSOLE) std::cout << "Camera control mode: panning\n";
 		break;
 	case GLUT_KEY_F2:
 		camera_mode = CAM_MOVE;
-		std::cout << "Camera control mode: moving\n";
+		if (PRINT_CONSOLE) std::cout << "Camera control mode: moving\n";
 		break;
 	case GLUT_KEY_F3:
-		std::cout << "Set: Nadir plane\n [Camera move not supported]\n";
+		if (PRINT_CONSOLE) std::cout << "Set: Nadir plane\n [Camera move not supported]\n";
 		setTimeAndSpace(PERSPECTIVE_NADIR);
 		break;
 	case GLUT_KEY_F4:
-		std::cout << "Set: Low angle view\n";
+		if (PRINT_CONSOLE) std::cout << "Set: Low angle view\n";
 		setTimeAndSpace(PERSPECTIVE_LOW_ANGLE);
 		break;
 	case GLUT_KEY_F5:
-		std::cout << "Set: Normal view\n";
+		if (PRINT_CONSOLE) std::cout << "Set: Normal view\n";
 		setTimeAndSpace(PERSPECTIVE_NORMAL);
 		break;
 	case GLUT_KEY_F6:
-		std::cout << "Set: High angle view\n";
+		if (PRINT_CONSOLE) std::cout << "Set: High angle view\n";
 		setTimeAndSpace(PERSPECTIVE_DEFAULT);
 		break;
 	case GLUT_KEY_F7:
-		std::cout << "Set: Zenith view\n [Camera move not supported]\n";
+		if (PRINT_CONSOLE) std::cout << "Set: Zenith view\n [Camera move not supported]\n";
 		setTimeAndSpace(PERSPECTIVE_ZENITH);
 		break;
 	case GLUT_KEY_RIGHT:
 		if (camera_mode == CAM_PAN) {
-			// Camera should rotate around itself clockwise
+			// Camera should rotate around itself counter-clockwise
 			// We will use the same idea as a rotation transformation to move the camera center around 
 			// the axis parallel to the y-axis and that passes through the camera eye
 			center_x -= eye_x;
 			center_z -= eye_z; // We move it to where it would be if eye was in (0,y,0)
 
-			center_x = center_x * cosf(CAM_JUMP) + center_z * sinf(CAM_JUMP);
-			center_z = center_z * cosf(CAM_JUMP) - center_x * sinf(CAM_JUMP);
+			center_x = center_x * cosf(-CAM_JUMP) + center_z * sinf(-CAM_JUMP);
+			center_z = center_z * cosf(-CAM_JUMP) - center_x * sinf(-CAM_JUMP);
 
 			center_x += eye_x;
 			center_z += eye_z;
@@ -548,8 +551,8 @@ void specialKeys(int key, int x, int y) {
 			center_x -= eye_x;
 			center_z -= eye_z; // We move it to where it would be if eye was in (0,y,0)
 
-			center_x = center_x * cosf(-CAM_JUMP) + center_z * sinf(-CAM_JUMP);
-			center_z = center_z * cosf(-CAM_JUMP) - center_x * sinf(-CAM_JUMP);
+			center_x = center_x * cosf(CAM_JUMP) + center_z * sinf(CAM_JUMP);
+			center_z = center_z * cosf(CAM_JUMP) - center_x * sinf(CAM_JUMP);
 
 			center_x += eye_x;
 			center_z += eye_z;
@@ -633,7 +636,7 @@ void specialKeys(int key, int x, int y) {
 		break;
 	}
 
-	if(!smooth_cam) glutPostRedisplay(); // Solicitar actualización de visualización
+	glutPostRedisplay(); // Solicitar actualización de visualización
 }
 
 void keyboardKeys(unsigned char key, int x, int y) {
@@ -724,13 +727,15 @@ int main(int argc, char** argv) {
 	// Creamos la nueva ventana
 	glutCreateWindow("Etapa 6");
 
-	std::cout << "Welcome! \n"
-		<< "Use the following controls to move the camera : \n"
-		<< " F1 : Camera panning[default]\n F2 : Move camera\n F3 : Nadir\n"
-		<< " F4 : low angle view\n F5 : Normal\n F6 : high angle view[default]\n F7 : Zenith\n";
-	std::cout << "Use F to enable or disable fog.\n";
-	std::cout << "Use 2 to enable/disable the free light, WASD to move it horizontally. Q and E to move it vertically.\n";
-	std::cout << "Press P to pause or play the animation.\n";
+	if (PRINT_CONSOLE) {
+		std::cout << "Welcome! \n"
+			<< "Use the following controls to move the camera : \n"
+			<< " F1 : Camera panning[default]\n F2 : Move camera\n F3 : Nadir\n"
+			<< " F4 : low angle view\n F5 : Normal\n F6 : high angle view[default]\n F7 : Zenith\n";
+		std::cout << "Use F to enable or disable fog.\n";
+		std::cout << "Use 2 to enable/disable the free light, WASD to move it horizontally. Q and E to move it vertically.\n";
+		std::cout << "Press P to pause or play the animation.\n";
+	}
 
 	// Indicamos cuales son las funciones de redibujado e idle
 	glutReshapeFunc(reshape);
