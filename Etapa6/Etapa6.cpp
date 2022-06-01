@@ -12,6 +12,7 @@ const int W_HEIGHT = 700;
 bool show_axes = false;
 bool is_paused = true;
 bool show_fog = false;
+bool smooth_cam = true;
 
 // Constant to state the distance a camera jump makes with each input
 const GLfloat CAM_JUMP = 0.05f;
@@ -20,10 +21,14 @@ const GLfloat CAM_MAX_HEIGHT = 20.0f;
 const GLfloat background_color[] = { 1, 1, 1, 1 };
 
 // **** Variables ****
-GLfloat rotate_x, rotate_y; // Variables to manage the object rotation
+//GLfloat rotate_x, rotate_y; // Variables to manage the object rotation
 GLfloat eye_x = 1.0f, eye_y = 1.0f, eye_z = 1.0f; // Variables to manage the camera
 GLfloat center_x = 0.0f, center_y = 0.0f, center_z = 0.0f;
 GLfloat up_x = 0.0f, up_y = 1.0f, up_z = 0.0f;
+
+GLfloat real_eye[] = { eye_x, eye_y, eye_z };
+GLfloat real_center[] = { center_x, center_y, center_z };
+GLfloat real_up[] = {up_x, up_y, up_z};
 
 bool light_is_on[] = { true, true, false };
 GLfloat ambient_light_value[] = { 0.5f, 0.5f, 0.5f, 1 }; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
@@ -117,9 +122,15 @@ void Display(void) {
 	} else glDisable(GL_FOG);
 
 	glPushMatrix(); {
-		gluLookAt(eye_x, eye_y, eye_z,
-			center_x, center_y, center_z,
-			up_x, up_y, up_z);
+		if (smooth_cam)	{
+			gluLookAt(real_eye[x], real_eye[y], real_eye[z],
+				real_center[x], real_center[y], real_center[z],
+				real_up[x], real_up[y], real_up[z]);
+		} else {
+			gluLookAt(eye_x, eye_y, eye_z,
+				center_x, center_y, center_z,
+				up_x, up_y, up_z);
+		}
 
 		// Free light 
 		if (light_is_on[LIGHT_2]) {
@@ -301,7 +312,7 @@ void reset_animation() {
 	animation_time = 0;
 }
 
-// Funcion que se ejecuta cuando el sistema no esta ocupado. Sin usar.
+// Funcion que se ejecuta cuando el sistema no esta ocupado.
 void Idle(void) {
 	// Animation
 	if (!is_paused) {
@@ -345,6 +356,18 @@ void Idle(void) {
 		if (animation_time >= ANIMATION_LENGTH) {
 			reset_animation();
 		}
+	}
+
+	if (smooth_cam) {
+		smoothTransition(&real_center[x], center_x, 0.15f);
+		smoothTransition(&real_center[y], center_y, 0.15f);
+		smoothTransition(&real_center[z], center_z, 0.15f);
+		smoothTransition(&real_eye[x], eye_x, 0.15f);
+		smoothTransition(&real_eye[y], eye_y, 0.15f);
+		smoothTransition(&real_eye[z], eye_z, 0.15f);
+		smoothTransition(&real_up[x], up_x, 0.15f);
+		smoothTransition(&real_up[y], up_y, 0.15f);
+		smoothTransition(&real_up[z], up_z, 0.15f);
 	}
 
 	// Indicamos que es necesario repintar la pantalla
@@ -426,6 +449,9 @@ void setTimeAndSpace(int value) {
 		break;
 	case FOG_TOGGLE:
 		show_fog = !show_fog;
+		break;
+	case SMOOTH_CAM:
+		smooth_cam = !smooth_cam;
 		break;
 	default:
 		eye_x = 1.0f;
@@ -607,7 +633,7 @@ void specialKeys(int key, int x, int y) {
 		break;
 	}
 
-	glutPostRedisplay(); // Solicitar actualización de visualización
+	if(!smooth_cam) glutPostRedisplay(); // Solicitar actualización de visualización
 }
 
 void keyboardKeys(unsigned char key, int x, int y) {
@@ -666,6 +692,8 @@ void createMenu() {
 
 	glutSetMenu(idMenuDefault);
 	glutAddSubMenu("Other perspectives", idMenuNonDefault);
+
+	glutAddMenuEntry("Toggle smooth camera", SMOOTH_CAM);
 
 	int idMenuLights = glutCreateMenu(toggleLights);
 	glutAddMenuEntry("Ambient light", LIGHT_AMBIENT);

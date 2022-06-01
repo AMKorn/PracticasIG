@@ -31,6 +31,7 @@ const int ANIMATION_RESET = 8;
 
 const int AXES_TOGGLE = 9;
 const int FOG_TOGGLE = 10;
+const int SMOOTH_CAM = 11;
 
 // Constants for the different lights
 const int LIGHT_AMBIENT = 0;
@@ -357,4 +358,10 @@ void draw_ellipse(float center_x, float center_y, float radius_x, float radius_y
 		glVertex2f(x + center_x, y + center_y); //output vertex 
 	}
 	glEnd();
+}
+
+void smoothTransition(GLfloat *value, GLfloat destination, GLfloat speed) {
+	if (abs(*value - destination) > 0.01f) {
+		*value -= (*value - destination) * speed;
+	}
 }
