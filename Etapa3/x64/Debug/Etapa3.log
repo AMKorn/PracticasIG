@@ -3,6 +3,6 @@ C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(61,53):
 C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(61,33): warning C4244: 'argumento': conversión de 'float' a 'GLsizei'; posible pérdida de datos
 C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(61,19): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
 C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(61,13): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(108,19): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
-C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(108,13): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(107,19): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
+C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\Etapa3\Etapa3.cpp(107,13): warning C4244: 'argumento': conversión de 'float' a 'GLint'; posible pérdida de datos
   Etapa3.vcxproj -> C:\Users\andre\Desktop\Andreas\Universidad\PracticasIG\x64\Debug\Etapa3.exe

@@ -36,7 +36,7 @@ GLfloat realCenter[] = { centerX, centerY, centerZ };
 GLfloat realUp[] = {upX, upY, upZ};
 
 bool bLightIsOn[] = { true, true, false };
-GLfloat ambientLightValue[] = { 0.5f, 0.5f, 0.5f, 1 }; // values in RGBA // CON luz = 1,1,1, SIN luz = 0,0,0
+GLfloat ambientLightValue[] = { 0.5f, 0.5f, 0.5f, 1 }; // values in RGBA: CON luz = 1,1,1, SIN luz = 0,0,0
 
 //GLfloat light1_pos[] = { 0.0f, 0.0f, 0.0f, 1.0f }; // Position of light 1
 GLfloat light1Value[] = { 1, 1, 1, 1 }; // { 0.0f, 1.0f, 1.0f, 1.0f }; // Values of light 1 (RGBA)
@@ -90,10 +90,6 @@ const GLfloat MAX_LAMP_BOUNCE = 0.1f;
 int animationTime = 0;
 bool bLampIsJumping = true;
 
-// * Texture values * 
-int woodWidth, woodHeight, nrChannels;
-unsigned char* data = stbi_load("wood.jpg", &woodWidth, &woodHeight, &nrChannels, 0);
-unsigned int woodTexture;
 
 // Funcion que visualiza la escena OpenGL
 void display(void) {
@@ -249,6 +245,7 @@ void display(void) {
 
 							// Lamp cone + lightbulb
 							glPushMatrix(); {
+								// Lamp cone
 								glTranslatef(0, 0, lampArmLength);
 								glRotatef(lampConeDirection[y], 0, 1, 0);
 								glRotatef(lampConeDirection[x], 1, 0, 0);
@@ -258,6 +255,7 @@ void display(void) {
 								gluCylinder(invQuadratic, lampArmRadius - 0.001f, lampConeWidth - 0.001f, lampArmLength / 2, 32, 32);
 
 								resetMaterial();
+								// Lightbulb
 								glTranslatef(0, 0, 0.035f);
 								// Set the material with emission to 1 or to 0 depending on if the light is on
 								if (bLightIsOn[LIGHT_1]) {
@@ -336,7 +334,7 @@ void idle(void) {
 			lampConeDirection[x] += 20;
 		} else if (animationTime <= 45) {
 			// From 35 -> 45
-			// Lamp turns around. Should turn around exactly 180 degrees in 10 seconds. That means 18 degrees per second: d=18 * (t - to)
+			// Lamp turns around. Should turn around exactly 180 degrees in 10 frames. That means 18 degrees per second: d=18 * (t - to)
 			// where to is the starting time of the animation (in this case, 35).
 			lampDirection = - 18 * (animationTime - 35);
 			lampConeDirection[x] -= 10;
@@ -530,7 +528,7 @@ void specialKeys(int key, int x, int y) {
 			// Camera should move to its right
 
 			// We need to get the unit vector of the vector eye -> center
-			// u = v / module(v);
+			// u = v / modulus(v);
 			unitaryX = centerX - eyeX;
 			unitaryY = centerY - eyeY;
 			unitaryZ = centerZ - eyeZ;
@@ -566,7 +564,7 @@ void specialKeys(int key, int x, int y) {
 			// Camera should move to its left
 
 			// We need to get the unit vector of the vector eye -> center
-			// u = v / module(v);
+			// u = v / modulus(v);
 			unitaryX = centerX - eyeX;
 			unitaryY = centerY - eyeY;
 			unitaryZ = centerZ - eyeZ;
@@ -595,7 +593,7 @@ void specialKeys(int key, int x, int y) {
 			// UP KEY -> move forward
 
 			// We need to get the unit vector of the vector eye -> center
-			// u = v / module(v);
+			// u = v / modulus(v);
 			unitaryX = centerX - eyeX;
 			unitaryY = centerY - eyeY;
 			unitaryZ = centerZ - eyeZ;
@@ -621,7 +619,7 @@ void specialKeys(int key, int x, int y) {
 			// DOWN KEY -> move backwards
 
 			// We need to get the unit vector of the vector eye -> center
-			// u = v / module(v);
+			// u = v / modulus(v);
 			unitaryX = centerX - eyeX;
 			unitaryY = centerY - eyeY;
 			unitaryZ = centerZ - eyeZ;
@@ -743,7 +741,7 @@ int main(int argc, char** argv) {
 		std::cout << "Press P to pause or play the animation.\n";
 	}
 
-	// Indicamos cuales son las funciones de redibujado e idle
+	// Indicamos cuales son las funciones especiales
 	glutReshapeFunc(reshape);
 	glutDisplayFunc(display);
 	glutSpecialFunc(specialKeys);
@@ -751,8 +749,17 @@ int main(int argc, char** argv) {
 	glutIdleFunc(idle);
 	createMenu();
 
-	// Establecemos que inv_quadratic tiene que tener las normales para el interior
+	// Establecemos que invQuadratic tiene que tener las normales hacia el interior
 	gluQuadricOrientation(invQuadratic, GLU_INSIDE);
+
+	// Texture setting 
+	int woodWidth, woodHeight, nrChannels;
+	unsigned char* woodData = stbi_load("wood.jpg", &woodWidth, &woodHeight, &nrChannels, 0);
+	unsigned int woodTexture;
+	glGenTextures(1, &woodTexture);
+	glBindTexture(GL_TEXTURE_2D, woodTexture);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, woodWidth, woodHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, woodData);
 
 	// El color de fondo sera el blanco (RGBA, RGB + Alpha channel)
 	glClearColor(backgroundColor[RED], backgroundColor[GREEN], backgroundColor[BLUE], backgroundColor[ALPHA]);
