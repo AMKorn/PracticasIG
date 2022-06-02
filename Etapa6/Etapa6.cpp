@@ -148,9 +148,11 @@ void display(void) {
 			glPushMatrix(); {
 				glTranslatef(light2PosX, light2PosY, light2PosZ);
 
-				glLightfv(GL_LIGHT2, GL_POSITION, new GLfloat[]{ 0, 0, 0, 1 });
+				GLfloat light2Position[] = { 0, 0, 0, 1 };
+				glLightfv(GL_LIGHT2, GL_POSITION, light2Position);
 
-				setMaterial(new GLfloat[]{ 1, 1, 0 }, 0, 0, 0, 1, 50);
+				GLfloat yellow[] = { 1, 1, 0 };
+				setMaterial(yellow, 0, 0, 0, 1, 50);
 				gluSphere(quadratic, 0.02f, 32, 32);
 				resetMaterial();
 			}
@@ -259,14 +261,17 @@ void display(void) {
 								glTranslatef(0, 0, 0.035f);
 								// Set the material with emission to 1 or to 0 depending on if the light is on
 								if (bLightIsOn[LIGHT_1]) {
-									setMaterial(new GLfloat[]{ 1,1,0 }, 0, 0, 0, 1, 50);
+									GLfloat yellow[] = { 1,1,0 };
+									setMaterial(yellow, 0, 0, 0, 1, 50);
 								} else {
-									setMaterial(new GLfloat[]{ 1,1,1 }, 0, 0, 0, 0, 50);
+									GLfloat white[] = { 1,1,1 };
+									setMaterial(white, 0, 0, 0, 0, 50);
 								}
 								glutSolidSphere(0.02f, 32, 32);
 
-								glLightfv(GL_LIGHT1, GL_POSITION, new GLfloat[]{ 0, 0, 0 });
-								glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, new GLfloat[]{ 0, 0, 1 });
+								GLfloat lightbulbPosition[] = { 0,0,0 }, lightbulbSpotlightDirection[] = { 0,0,1 };
+								glLightfv(GL_LIGHT1, GL_POSITION, lightbulbPosition);
+								glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, lightbulbSpotlightDirection);
 							}
 							glPopMatrix(); // End of lamp cone
 

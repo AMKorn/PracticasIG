@@ -77,7 +77,8 @@ void setMaterial(GLfloat color[3], GLfloat ambient_level, GLfloat diffuse_level,
 }
 
 void resetMaterial() {
-	setMaterial(new GLfloat[]{ 0,0,0 }, AMBIENT_DEF, DIFFUSE_DEF, SPECULAR_DEF, EMISSION_DEF, SHININESS_DEF);
+	GLfloat black[] = { 0,0,0 };
+	setMaterial(black, AMBIENT_DEF, DIFFUSE_DEF, SPECULAR_DEF, EMISSION_DEF, SHININESS_DEF);
 }
 
 void drawAxes() {
