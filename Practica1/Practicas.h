@@ -3,10 +3,10 @@
 // proyecto
 ////////////////////////////////////////////////////
 #include <iostream>
-#include <GL/glut.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+//#include <GL/glut.h>
 #include <GL/freeglut.h>
+//#include <GL/gl.h>
+//#include <GL/glu.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
 

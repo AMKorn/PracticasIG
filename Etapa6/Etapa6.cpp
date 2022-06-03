@@ -90,6 +90,10 @@ const GLfloat MAX_LAMP_BOUNCE = 0.1f;
 int animationTime = 0;
 bool bLampIsJumping = true;
 
+//// * Texture values * 
+//int woodWidth, woodHeight, nrChannels;
+//unsigned char* woodData = stbi_load("wood.jpg", &woodWidth, &woodHeight, &nrChannels, 0);
+//unsigned int woodTexture;
 
 // Funcion que visualiza la escena OpenGL
 void display(void) {
@@ -757,14 +761,13 @@ int main(int argc, char** argv) {
 	// Establecemos que invQuadratic tiene que tener las normales hacia el interior
 	gluQuadricOrientation(invQuadratic, GLU_INSIDE);
 
-	// Texture setting 
-	int woodWidth, woodHeight, nrChannels;
-	unsigned char* woodData = stbi_load("wood.jpg", &woodWidth, &woodHeight, &nrChannels, 0);
-	unsigned int woodTexture;
-	glGenTextures(1, &woodTexture);
-	glBindTexture(GL_TEXTURE_2D, woodTexture);
+	//// Texture setting 
+	//glGenTextures(1, &woodTexture);
+	//glBindTexture(GL_TEXTURE_2D, woodTexture);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, woodWidth, woodHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, woodData);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, woodWidth, woodHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, woodData);
+	////glGenerateMipMap(GL_TEXTURE_2D);
+	//stbi_image_free(woodData);
 
 	// El color de fondo sera el blanco (RGBA, RGB + Alpha channel)
 	glClearColor(backgroundColor[RED], backgroundColor[GREEN], backgroundColor[BLUE], backgroundColor[ALPHA]);
