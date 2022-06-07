@@ -3,8 +3,8 @@
 // proyecto
 ////////////////////////////////////////////////////
 #include <iostream>
-//#include <GL/glut.h>
 #include <GL/freeglut.h>
+//#include <GL/glut.h>
 //#include <GL/gl.h>
 //#include <GL/glu.h>
 #define _USE_MATH_DEFINES
@@ -58,7 +58,7 @@ const GLfloat EMISSION_DEF = 0;
 const GLfloat SHININESS_DEF = 0;
 
 GLUquadricObj* quadratic = gluNewQuadric(); // quadratic for the different glu primitives that require it
-GLUquadricObj* invQuadratic = gluNewQuadric(); // inverted quadratic, for use when something's inside is being drawn
+GLUquadricObj* invQuadratic = gluNewQuadric(); // inverted quadratic, to use when something's inside is being drawn
 
 void setMaterial(GLfloat color[3], GLfloat ambient_level, GLfloat diffuse_level, GLfloat specular_level, GLfloat emission_level, GLfloat shininess) {
 	GLfloat red = color[RED];
@@ -190,13 +190,6 @@ void drawParallMaterial(GLfloat face_length_x, GLfloat face_length_y, GLfloat fa
 	}
 
 	//// Cara paralela al plano xy
-	/*glBegin(GL_POLYGON);
-	glNormal3f(0, 0, 1.0f);
-	glVertex3f(0, 0, face_length_z);
-	glVertex3f(face_length_x, 0, face_length_z);
-	glVertex3f(face_length_x, face_length_y, face_length_z);
-	glVertex3f(0, face_length_y, face_length_z);
-	glEnd();*/
 	glBegin(GL_TRIANGLE_STRIP);
 	glNormal3f(0, 0, 1);
 	for (int i = 0; i < face_polygons; i++) {
@@ -221,13 +214,6 @@ void drawParallMaterial(GLfloat face_length_x, GLfloat face_length_y, GLfloat fa
 	}
 
 	// Cara paralela al plano zy
-	/*glBegin(GL_POLYGON);
-	glNormal3f(1.0f, 0, 0);
-	glVertex3f(face_length_x, 0, 0);
-	glVertex3f(face_length_x, 0, face_length_z);
-	glVertex3f(face_length_x, face_length_y, face_length_z);
-	glVertex3f(face_length_x, face_length_y, 0);
-	glEnd();*/
 	glBegin(GL_TRIANGLE_STRIP);
 	glNormal3f(1, 0, 0);
 	for (int i = 0; i < face_polygons; i++) {
@@ -251,13 +237,6 @@ void drawParallMaterial(GLfloat face_length_x, GLfloat face_length_y, GLfloat fa
 		}
 	}
 	glEnd();
-	/*glBegin(GL_POLYGON);
-	glNormal3f(0, -1.0f, 0);
-	glVertex3f(0, 0, 0);
-	glVertex3f(face_length_x, 0, 0);
-	glVertex3f(face_length_x, 0, face_length_z);
-	glVertex3f(0, 0, face_length_z);
-	glEnd();*/
 
 	// Cara paralela al plano xz
 	glBegin(GL_TRIANGLE_STRIP);
