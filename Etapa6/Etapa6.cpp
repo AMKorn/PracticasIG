@@ -30,7 +30,7 @@ GLfloat eyeX = 1.0f, eyeY = 1.0f, eyeZ = 1.0f;
 GLfloat centerX = 0.0f, centerY = 0.0f, centerZ = 0.0f;
 GLfloat upX = 0.0f, upY = 1.0f, upZ = 0.0f;
 
-// Variables for perspective when using smooth_camera
+// Variables for perspective when using smooth camera
 GLfloat realEye[] = { eyeX, eyeY, eyeZ }; 
 GLfloat realCenter[] = { centerX, centerY, centerZ };
 GLfloat realUp[] = {upX, upY, upZ};
@@ -62,6 +62,8 @@ GLfloat tableHeight = 0.5f;
 GLfloat tableSurface[] = { 0.75f, 0.05f, 0.5f };
 GLfloat tableLeg[] = { 0.05f, tableHeight - tableSurface[y], 0.05f };
 
+GLint tableResolution = 110; 
+
 // * Lamp values *
 const GLfloat INIT_LAMP_POSITION[] = { tableSurface[x] / 4, tableHeight, tableSurface[z] / 2 };
 GLfloat lampPosition[] = { INIT_LAMP_POSITION[x], INIT_LAMP_POSITION[y], INIT_LAMP_POSITION[z] };
@@ -80,20 +82,18 @@ GLfloat lampArticulationAngle = INIT_LAMP_ARTICULATION_ANGLE;
 GLfloat MAX_LAMP_ARTICULATION_ANGLE = 90.0f;
 GLint rotationDirection = 1;
 
-// * Ball values *
-GLfloat ballPosition[] = { tableSurface[x] * 2 / 3, tableHeight, tableSurface[z] / 2 };
-GLfloat ballRadius = 0.05f;
+// * Teapot values *
+GLfloat TeapotPosition[] = { tableSurface[x] * 5 / 6, tableHeight - 0.01f, tableSurface[z] / 2 };
+GLfloat teapotSize = 0.05f;
+GLfloat teapotColor[] = { 242 / RGB_MAX, 214 / RGB_MAX, 184 / RGB_MAX };
+GLfloat teapotSpecular = 0.75f;
+GLfloat teapotShininess = 0.75f;
 
 // * Animation values *
 const int ANIMATION_LENGTH = 90;
 const GLfloat MAX_LAMP_BOUNCE = 0.1f;
 int animationTime = 0;
 bool bLampIsJumping = true;
-
-//// * Texture values * 
-//int woodWidth, woodHeight, nrChannels;
-//unsigned char* woodData = stbi_load("wood.jpg", &woodWidth, &woodHeight, &nrChannels, 0);
-//unsigned int woodTexture;
 
 // Funcion que visualiza la escena OpenGL
 void display(void) {
@@ -132,15 +132,18 @@ void display(void) {
 	} else glDisable(GL_FOG);
 
 	glPushMatrix(); {
-		if (bSmoothCam)	{
-			gluLookAt(realEye[x], realEye[y], realEye[z],
-				realCenter[x], realCenter[y], realCenter[z],
-				realUp[x], realUp[y], realUp[z]);
-		} else {
-			gluLookAt(eyeX, eyeY, eyeZ,
-				centerX, centerY, centerZ,
-				upX, upY, upZ);
+
+		// If smooth cam is not active, the perspective's destination values and its real values are equal.
+		if (!bSmoothCam) {
+			realEye[x] = eyeX, realEye[y] = eyeY, realEye[z] = eyeZ;
+			realCenter[x] = centerX, realCenter[y] = centerY, realCenter[z] = centerZ;
+			realUp[x] = upX, realUp[y] = upY, realUp[z] = upZ;
 		}
+
+		gluLookAt(realEye[x], realEye[y], realEye[z],
+			realCenter[x], realCenter[y], realCenter[z],
+			realUp[x], realUp[y], realUp[z]);
+
 
 		// Free light 
 		if (bLightIsOn[LIGHT_2]) {
@@ -169,21 +172,21 @@ void display(void) {
 
 			// We draw the table legs
 			setMaterial(tableColor, 0.5f, 0.05f, 1.0f, 0.0f, 5.0f);
-			drawParallMaterial(tableLeg[x], tableLeg[y], tableLeg[z], 128);
+			drawParallMaterial(tableLeg[x], tableLeg[y], tableLeg[z], tableResolution);
 
 			glPushMatrix(); {
 				glTranslatef(0, 0, tableSurface[z] - tableLeg[z]);
-				drawParallMaterial(tableLeg[x], tableLeg[y], tableLeg[z], 128);
+				drawParallMaterial(tableLeg[x], tableLeg[y], tableLeg[z], tableResolution);
 			}
 			glPopMatrix();
 
 			glPushMatrix(); {
 				glTranslatef(tableSurface[x] - tableLeg[x], 0, 0);
-				drawParallMaterial(tableLeg[x], tableLeg[y], tableLeg[z], 128);
+				drawParallMaterial(tableLeg[x], tableLeg[y], tableLeg[z], tableResolution);
 
 				glPushMatrix(); {
 					glTranslatef(0, 0, tableSurface[z] - tableLeg[z]);
-					drawParallMaterial(tableLeg[x], tableLeg[y], tableLeg[z], 128);
+					drawParallMaterial(tableLeg[x], tableLeg[y], tableLeg[z], tableResolution);
 				}
 				glPopMatrix();
 			}
@@ -193,7 +196,7 @@ void display(void) {
 			// Start of table surface
 			glPushMatrix(); {
 				glTranslatef(0, tableHeight - tableSurface[y], 0);
-				drawParallMaterial(tableSurface[x], tableSurface[y], tableSurface[z], 128);
+				drawParallMaterial(tableSurface[x], tableSurface[y], tableSurface[z], tableResolution);
 			}
 			glPopMatrix(); // End of table surface
 
@@ -290,14 +293,16 @@ void display(void) {
 			}
 			glPopMatrix(); // End of lamp
 
-			//// Start of ball
-			//glPushMatrix(); {
-			//	glTranslatef(ball_position[x], ball_position[y] + ball_radius, ball_position[z]);
-			//	resetMaterial();
-			//	glColor3f(0,1,0);
-			//	glutSolidSphere(ball_radius, 32, 32);
-			//}
-			//glPopMatrix(); // End of ball
+			// Start of teapot
+			glPushMatrix(); {
+				glTranslatef(TeapotPosition[x], TeapotPosition[y] + teapotSize, TeapotPosition[z]);
+				//drawAxes();
+				glRotatef(75, 0, 1, 0);
+				resetMaterial();
+				setMaterial(teapotColor, AMBIENT_DEF, DIFFUSE_DEF, teapotSpecular, EMISSION_DEF, teapotShininess);
+				glutSolidTeapot(teapotSize);
+			}
+			glPopMatrix(); // End of teapot
 
 		}
 		glPopMatrix(); // End of scene

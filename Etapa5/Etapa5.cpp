@@ -64,8 +64,8 @@ GLfloat MAX_LAMP_ARTICULATION_ANGLE = 90.0f;
 GLint rotationDirection = 1;
 
 // * Ball values *
-GLfloat ballPosition[] = { tableSurface[x] * 2 / 3, tableHeight, tableSurface[z] / 2 };
-GLfloat ballRadius = 0.05f;
+GLfloat TeapotPosition[] = { tableSurface[x] * 2 / 3, tableHeight, tableSurface[z] / 2 };
+GLfloat teapotSize = 0.05f;
 
 // Funcion que visualiza la escena OpenGL
 void display(void) {
